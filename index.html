@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>더웰니스 의원 - 데스크 코디네이터 자동화 포털</title>
+  <meta name="description" content="더웰니스 의원 데스크 코디네이터를 위한 실시간 자동화 유틸리티 허브. 시술별 주의사항 템플릿, 결제 금액 계산기, 동의서 QR 링크 생성기, 시술 타이머, 예약 대기보드 및 약어 사전을 제공합니다.">
+  
+  <!-- SEO Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="더웰니스 의원 - 데스크 자동화 포털">
+  <meta property="og:description" content="업무 효율을 높이는 더웰니스 의원 데스크 업무 자동화 시스템">
+  
+  <!-- CSS Link -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Lucide Icons (Premium Line Icons) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- QRious JS Library for QR Code generation (CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  
+  <!-- Supabase JS Client (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- 1. Header (Logo Area) -->
+  <header id="app-header">
+    <div class="header-inner" id="header-inner-wrap">
+      <!-- 중앙: 로고 영역 -->
+      <div class="logo-container" id="header-logo-btn" onclick="window.location.reload();">
+        <img src="logo.png" alt="더웰니스 의원 로고" class="header-logo-img" id="header-logo-image">
+        <div class="header-logo-text-group" id="header-logo-texts">
+          <h1 class="clinic-name" id="clinic-name-title">더웰니스 데스크 파이팅</h1>
+        </div>
+      </div>
+
+      <!-- 우측: 홈페이지 링크 버튼 -->
+      <a href="https://thewellnessclinic.co.kr/" target="_blank" rel="noopener noreferrer" class="homepage-link-btn" id="header-homepage-link">
+        <i data-lucide="external-link" class="link-icon"></i>
+        <span>홈페이지 링크</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- 2. Main Dashboard Layout -->
+  <main id="app-main-content">
+    <div class="dashboard-intro">
+      <h2>Desk Coordinator <span>Automation Hub</span></h2>
+      <!-- <p>피부과 데스크의 신속하고 정확한 환자 응대를 돕는 6가지 스마트 자동화 도구</p> -->
+    </div>
+
+    <!-- Scrollable Cards Grid Container -->
+    <div class="tools-grid" id="tools-grid-container">
+      <!-- Supabase 또는 로컬 기본 데이터에 의해 동적으로 카드가 이곳에 추가됩니다. -->
+    </div>
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. Modal: Precautions Generator -->
+  <div class="modal-overlay" id="modal-precautions" onclick="closeModalOnOverlay(event, 'modal-precautions')">
+    <div class="modal-container" id="modal-container-precautions">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>💬</span> 시술별 주의사항 생성기</h3>
+        <button class="close-btn" id="close-precautions" onclick="closeModal('modal-precautions')"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="precautions-patient-name">고객 성함</label>
+          <input type="text" class="form-input" id="precautions-patient-name" placeholder="예: 홍길동 (입력 시 메세지에 성함 자동 대입)" oninput="updateTemplate()">
+        </div>
+        <div class="form-group">
+          <label class="form-label">시술 카테고리 선택</label>
+          <div class="category-tabs" id="precautions-tabs">
+            <button class="tab-btn active" id="tab-botox" onclick="selectTemplateCategory('botox')">보톡스/필러</button>
+            <button class="tab-btn" id="tab-laser" onclick="selectTemplateCategory('laser')">레이저/토닝</button>
+            <button class="tab-btn" id="tab-booster" onclick="selectTemplateCategory('booster')">스킨부스터(리쥬란/엑소좀)</button>
+            <button class="tab-btn" id="tab-lifting" onclick="selectTemplateCategory('lifting')">리프팅(슈링크/울쎄라)</button>
+            <button class="tab-btn" id="tab-peeling" onclick="selectTemplateCategory('peeling')">필링/피부관리</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="precautions-detail-select">세부 시술 종류</label>
+          <select class="form-select" id="precautions-detail-select" onchange="updateTemplate()">
+            <!-- JS에서 동적으로 채워집니다. -->
+          </select>
+        </div>
+        <div class="template-preview-box" id="template-box">
+          <div class="template-content" id="template-content-view">
+            <!-- 시술 주의사항 문자 내용 렌더링 -->
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" id="btn-copy-template" onclick="copyTemplateToClipboard()">
+            <i data-lucide="copy"></i> 메세지 복사하기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Modal: Calculator -->
+  <div class="modal-overlay" id="modal-calculator" onclick="closeModalOnOverlay(event, 'modal-calculator')">
+    <div class="modal-container" id="modal-container-calculator">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>🧮</span> 패키지 결제 금액 계산기</h3>
+        <button class="close-btn" id="close-calculator" onclick="closeModal('modal-calculator')"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="calc-base-price">시술 기본가 (부가세 제외)</label>
+          <input type="number" class="form-input" id="calc-base-price" placeholder="금액을 입력하세요" oninput="calculatePrice()">
+        </div>
+        <div class="split-input">
+          <div class="form-group">
+            <label class="form-label" for="calc-qty">시술 횟수(회)</label>
+            <input type="number" class="form-input" id="calc-qty" value="1" min="1" oninput="calculatePrice()">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="calc-discount">할인율 (%)</label>
+            <input type="number" class="form-input" id="calc-discount" value="0" min="0" max="100" oninput="calculatePrice()">
+          </div>
+        </div>
+        <div class="split-input">
+          <div class="form-group">
+            <label class="form-label" for="calc-card-pay">카드 결제 예정액</label>
+            <input type="number" class="form-input" id="calc-card-pay" placeholder="직접 입력 시 현금 결제액 계산" oninput="calculateSplitPay('card')">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="calc-cash-pay">현금 결제 예정액</label>
+            <input type="number" class="form-input" id="calc-cash-pay" placeholder="직접 입력 시 카드 결제액 계산" oninput="calculateSplitPay('cash')">
+          </div>
+        </div>
+        
+        <div class="calc-summary" id="calculator-result-summary">
+          <div class="calc-row">
+            <span>순수 시술 합계 (할인 적용):</span>
+            <span id="res-discounted-base">0 원</span>
+          </div>
+          <div class="calc-row">
+            <span>부가세 (10%):</span>
+            <span id="res-vat">0 원</span>
+          </div>
+          <div class="calc-row total">
+            <span>최종 결제 금액 (VAT 포함):</span>
+            <span id="res-total-pay">0 원</span>
+          </div>
+          <div class="calc-row" id="row-split-warning" style="display: none; border-top: 1px dashed rgba(212, 175, 55, 0.2); padding-top: 0.8rem;">
+            <span style="color: #E74C3C; font-size: 0.85rem;"><i data-lucide="info" style="display: inline-block; vertical-align: middle; width: 14px; height: 14px;"></i> 미결제 잔액:</span>
+            <span id="res-remaining-pay" style="color: #E74C3C; font-weight: 700; font-size: 0.95rem;">0 원</span>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-secondary" style="flex: 1;" onclick="resetCalculator()">초기화</button>
+          <button class="btn-primary" style="flex: 2;" onclick="copyCalcToClipboard()"><i data-lucide="copy"></i> 계산 결과 복사</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Modal: QR Consent Form -->
+  <div class="modal-overlay" id="modal-qrcode" onclick="closeModalOnOverlay(event, 'modal-qrcode')">
+    <div class="modal-container" id="modal-container-qrcode">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>📋</span> 모바일 동의서 QR 생성기</h3>
+        <button class="close-btn" id="close-qrcode" onclick="closeModal('modal-qrcode')"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="qr-preset-select">동의서 프리셋 선택</label>
+          <select class="form-select" id="qr-preset-select" onchange="applyQRPreset()">
+            <option value="custom">직접 링크 입력 (Custom)</option>
+            <option value="botox">보톡스 시술 동의서 (Tablet #1)</option>
+            <option value="filler">필러/필러 히알라제 시술 동의서 (Tablet #2)</option>
+            <option value="laser">토닝 및 기기 레이저 동의서 (Tablet #3)</option>
+            <option value="skindoctor">스킨부스터 & 주사제 시술 동의서 (Tablet #4)</option>
+            <option value="lifting">초음파/고주파 리프팅 동의서 (Tablet #5)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="qr-link-url">동의서 URL 주소</label>
+          <input type="url" class="form-input" id="qr-link-url" placeholder="https://..." oninput="generateQRCode()">
+        </div>
+        <div class="qr-output-area">
+          <div id="qrcode-container">
+            <canvas id="qrcode"></canvas>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">위 QR코드를 태블릿 카메라로 스캔하거나 아래 링크를 공유하세요.</p>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" id="btn-copy-qr-link" onclick="copyQRLink()"><i data-lucide="link"></i> 동의서 링크 복사</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Modal: Treatment Timer -->
+  <div class="modal-overlay" id="modal-timer" onclick="closeModalOnOverlay(event, 'modal-timer')">
+    <div class="modal-container" id="modal-container-timer">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>⏱️</span> 시술 대기 / 마취 시간 타이머</h3>
+        <button class="close-btn" id="close-timer" onclick="closeModal('modal-timer')"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="timer-grid">
+          <div>
+            <div class="split-input">
+              <div class="form-group">
+                <label class="form-label" for="timer-patient-name">환자 성함</label>
+                <input type="text" class="form-input" id="timer-patient-name" placeholder="예: 김피부">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="timer-type">타이머 유형</label>
+                <select class="form-select" id="timer-type" onchange="adjustTimerDefaultValue()">
+                  <option value="numb_face">얼음/크림마취 (20분)</option>
+                  <option value="numb_laser">레이저마취 (30분)</option>
+                  <option value="wait_doctor">원장님 대기 (10분)</option>
+                  <option value="ldm">LDM/진정관리 (15분)</option>
+                  <option value="custom">직접 지정 (분)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group" id="timer-custom-minutes-group" style="display: none;">
+              <label class="form-label" for="timer-minutes">시간 지정 (단위: 분)</label>
+              <input type="number" class="form-input" id="timer-minutes" value="20" min="1">
+            </div>
+            <button class="btn-primary" id="btn-start-timer" onclick="startNewTimer()"><i data-lucide="play"></i> 타이머 시작</button>
+          </div>
+          
+          <div class="active-timers">
+            <h4 class="form-label" style="border-bottom: 2px solid var(--primary-gold); padding-bottom: 0.4rem; margin-bottom: 0.8rem;">
+              진행 중인 대기 타이머 목록
+            </h4>
+            <div id="timers-list-container">
+              <!-- 진행중인 타이머 리스트 동적 렌더링 -->
+              <p style="text-align: center; color: var(--text-muted); font-size: 0.9rem; padding: 1.5rem 0;" id="no-timers-msg">현재 작동 중인 타이머가 없습니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Modal: Realtime Waiting Board -->
+  <div class="modal-overlay" id="modal-waiting" onclick="closeModalOnOverlay(event, 'modal-waiting')">
+    <div class="modal-container" id="modal-container-waiting" style="max-width: 780px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>🏥</span> 실시간 예약/내원 대기 보드</h3>
+        <button class="close-btn" id="close-waiting" onclick="closeModal('modal-waiting')"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <!-- 대기자 등록 폼 -->
+        <div style="background: #FDFBF7; padding: 1.2rem; border-radius: 10px; border: 1px solid var(--card-border); margin-bottom: 1.5rem;">
+          <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.8rem; color: var(--text-dark);">새 대기 환자 등록</h4>
+          <div class="split-input" style="grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.8rem; align-items: end;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="wait-input-name" style="font-size: 0.8rem;">성함</label>
+              <input type="text" class="form-input" id="wait-input-name" placeholder="예: 김민지">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="wait-input-treatment" style="font-size: 0.8rem;">시술 내용</label>
+              <input type="text" class="form-input" id="wait-input-treatment" placeholder="예: 미간 보톡스">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="wait-input-status" style="font-size: 0.8rem;">진행 현황</label>
+              <select class="form-select" id="wait-input-status">
+                <option value="wait">접수대기</option>
+                <option value="numb">마취도포</option>
+                <option value="care">시술/관리중</option>
+                <option value="done">수납/귀가대기</option>
+              </select>
+            </div>
+            <div>
+              <button class="btn-primary" style="padding: 0.8rem; font-size: 0.9rem;" id="btn-add-waiting" onclick="addWaitingPatient()">
+                등록하기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 대기자 리스트 테이블 -->
+        <div style="overflow-x: auto;">
+          <table class="waiting-table" id="patient-waiting-table">
+            <thead>
+              <tr>
+                <th style="width: 15%">시간</th>
+                <th style="width: 20%">성함</th>
+                <th style="width: 30%">시술 내용</th>
+                <th style="width: 20%">진행 현황</th>
+                <th style="width: 15%">액션</th>
+              </tr>
+            </thead>
+            <tbody id="waiting-patients-tbody">
+              <!-- JS에서 동적으로 채워집니다. -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Modal: Coordinator Dictionary -->
+  <div class="modal-overlay" id="modal-dictionary" onclick="closeModalOnOverlay(event, 'modal-dictionary')">
+    <div class="modal-container" id="modal-container-dictionary">
+      <div class="modal-header">
+        <h3 class="modal-title"><span>📖</span> 코디네이터 의학 약어 사전</h3>
+        <button class="close-btn" id="close-dictionary" onclick="closeModal('modal-dictionary')"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="search-wrapper">
+          <i data-lucide="search" class="search-icon"></i>
+          <input type="text" class="form-input dict-search" id="dict-search-input" placeholder="약어(Abbr) 또는 한글 설명 검색 (예: BTX, C/O...)" oninput="filterDictionary()">
+        </div>
+        
+        <div class="dict-list" id="dict-items-container">
+          <!-- JS에서 동적으로 단어 목록을 생성하고 필터링해 줍니다. -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- ==================== TOAST NOTIFICATION ==================== -->
+  <div class="toast-notification" id="toast-notify">
+    <i data-lucide="check-circle" class="toast-icon" id="toast-icon-render"></i>
+    <span id="toast-message-text">메세지가 클립보드에 복사되었습니다!</span>
+  </div>
+
+  <!-- JS Link (Cache Buster 적용으로 브라우저 구버전 캐싱 강제 차단) -->
+  <script src="app.js?v=20260624_04"></script>
+</body>
+</html>

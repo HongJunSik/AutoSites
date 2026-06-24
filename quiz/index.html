@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>더웰니스의원 웰니스 퀴즈 (The Wellness Quiz)</title>
+  <meta name="description" content="더웰니스의원의 주요 진료 과목, 병원 정보, 건강 상식을 학습하는 듀오링고 스타일의 퀴즈 게임">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Style Sheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Firebase Compat SDKs (For easy global script inclusion) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body class="light-mode">
+  <div id="app-container">
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Top Navigation Header (Global stats / Settings) -->
+    <header class="app-header">
+      <div class="header-left">
+        <h1 class="logo-text" id="logo-btn">THE WELLNESS</h1>
+        <!-- Firebase Connection Badge -->
+        <div id="firebase-status" class="status-badge offline" style="cursor: default;">
+          <span class="status-dot"></span>
+          <span class="status-label">Local 모드</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <!-- Streak -->
+        <div class="stat-item" id="streak-stat" title="연속 학습 일수">
+          <i class="fa-solid fa-fire fire-icon"></i>
+          <span id="streak-count">0</span>일
+        </div>
+        <!-- Total XP -->
+        <div class="stat-item" id="xp-stat" title="획득한 경험치">
+          <i class="fa-solid fa-bolt bolt-icon"></i>
+          <span id="xp-count">0</span> XP
+        </div>
+        <!-- Settings Button -->
+        <button id="settings-toggle-btn" class="header-btn" title="설정"><i class="fa-solid fa-gear"></i></button>
+        <!-- Leaderboard Button -->
+        <button id="leaderboard-toggle-btn" class="header-btn" title="순위표"><i class="fa-solid fa-trophy"></i></button>
+      </div>
+    </header>
+
+    <main class="app-content">
+      
+      <!-- SCREEN 1: WELCOME / HOME SCREEN -->
+      <section id="welcome-screen" class="app-screen active">
+        <div class="hero-section">
+          <!-- Duo Owl Mascot on Home Screen -->
+          <div class="mascot-container home-mascot">
+            <div id="home-mascot-container"></div>
+            <div class="mascot-bubble">
+              <p id="mascot-greeting">안녕! 더웰니스의원에 대해 얼마나 잘 아는지 테스트해볼까?</p>
+            </div>
+          </div>
+
+          <div class="user-intro-form" id="auth-form-container">
+            <!-- 로그인 폼 -->
+            <div id="login-form-box">
+              <h2 class="section-title">학습 로그인</h2>
+              <p class="section-subtitle" style="margin-bottom: 12px;">본인의 닉네임과 비밀번호를 입력하세요.</p>
+              <div class="input-group">
+                <input type="text" id="login-id-input" placeholder="닉네임" maxlength="15">
+                <input type="password" id="login-pw-input" placeholder="비밀번호">
+                <button id="login-submit-btn" class="primary-btn btn-3d">로그인</button>
+                <button id="go-to-signup-btn" class="outline-btn btn-3d" style="align-self: center; margin-top: 12px; width: 100%;">처음이라면 이곳을 눌러주세요</button>
+              </div>
+            </div>
+
+            <!-- 신규 가입 폼 (기본 숨김) -->
+            <div id="signup-form-box" style="display: none;">
+              <h2 class="section-title">신규 학습자 등록</h2>
+              <p class="section-subtitle" style="margin-bottom: 12px;">새로운 닉네임과 비밀번호를 입력하세요.</p>
+              <div class="input-group">
+                <input type="text" id="signup-id-input" placeholder="새로운 닉네임" maxlength="15">
+                <input type="password" id="signup-pw-input" placeholder="새로운 비밀번호">
+                <button id="signup-submit-btn" class="primary-btn btn-3d">계정 생성 및 시작하기</button>
+                <button id="go-to-login-btn" class="outline-btn btn-3d" style="align-self: center; margin-top: 12px; width: 100%;">이미 계정이 있다면? 로그인하기</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="topic-selection-section" class="topic-selection-section disabled">
+          <h2 class="section-title"><i class="fa-solid fa-graduation-cap"></i> 학습 주제 선택</h2>
+          <p class="section-subtitle">배우고 싶은 주제의 카드를 선택하여 퀴즈를 완료하세요!</p>
+          
+          <div class="topics-grid" id="topics-grid-container">
+            <!-- Dynamic Topic Cards will be rendered here by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 2: QUIZ PLAY SCREEN -->
+      <section id="quiz-screen" class="app-screen">
+        <div class="quiz-header-bar">
+          <!-- Back button -->
+          <button id="quiz-back-btn" class="icon-btn-large" title="학습 종료"><i class="fa-solid fa-xmark"></i></button>
+          
+          <!-- Mini Progress Bar -->
+          <div class="quiz-progress-container">
+            <div class="quiz-progress-bar-bg">
+              <div id="quiz-progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- Hearts / Lives -->
+          <div class="hearts-container" id="hearts-container">
+            <i class="fa-solid fa-heart heart-icon active"></i>
+            <i class="fa-solid fa-heart heart-icon active"></i>
+            <i class="fa-solid fa-heart heart-icon active"></i>
+            <i class="fa-solid fa-heart heart-icon active"></i>
+            <i class="fa-solid fa-heart heart-icon active"></i>
+          </div>
+        </div>
+
+        <div class="quiz-body-content">
+          <!-- Dynamic Mascot Bubble for Guidance/Cheering -->
+          <div class="mascot-quiz-helper">
+            <div class="mini-mascot" id="quiz-mascot-container"></div>
+            <div class="quiz-speech-bubble">
+              <p id="quiz-question-prompt">질문 내용을 불러오는 중입니다...</p>
+            </div>
+          </div>
+
+          <!-- Answer Work Area -->
+          <div class="answer-work-area">
+            
+            <!-- Type A: Multiple Choice -->
+            <div id="panel-multiple-choice" class="answer-panel">
+              <div class="options-vertical-grid" id="mc-options-container">
+                <!-- Buttons will be dynamically inserted here -->
+              </div>
+            </div>
+
+            <!-- Type B: Word Bank (Sentence Building) -->
+            <div id="panel-word-bank" class="answer-panel" style="display: none;">
+              <!-- Target slots -->
+              <div class="word-slots-container" id="wb-slots-container">
+                <span class="placeholder-text">이곳에 단어 칩을 조립하세요.</span>
+              </div>
+              
+              <!-- Source word chips -->
+              <div class="word-chips-pool" id="wb-pool-container">
+                <!-- Chips will be dynamically inserted here -->
+              </div>
+            </div>
+
+            <!-- Type C: Fill-In-The-Blank -->
+            <div id="panel-fill-blank" class="answer-panel" style="display: none;">
+              <div class="sentence-with-blank" id="fib-sentence-container">
+                <!-- Sentence text with a styled box -->
+              </div>
+              <div class="fill-options-container" id="fib-options-container">
+                <!-- Multiple choice options for the blank -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Sticky Quiz Bottom Action Bar -->
+        <footer class="quiz-footer-bar" id="quiz-footer-action">
+          <div class="footer-wrapper">
+            <div class="quiz-feedback-text-container" id="quiz-feedback-box" style="display: none;">
+              <div class="feedback-icon-circle">
+                <i class="fa-solid fa-check"></i>
+              </div>
+              <div class="feedback-text-details">
+                <h4 id="feedback-title">훌륭해요!</h4>
+                <p id="feedback-message">잘 하셨어요!</p>
+              </div>
+            </div>
+            
+            <button id="quiz-action-btn" class="disabled-btn btn-3d" disabled>선택하세요</button>
+          </div>
+        </footer>
+      </section>
+
+      <!-- SCREEN 3: RESULT SCREEN -->
+      <section id="result-screen" class="app-screen">
+        <div class="result-container">
+          <h2 class="victory-title">레슨 완료!</h2>
+          <p class="victory-subtitle">더웰니스의원에 대한 퀴즈를 멋지게 마쳤어요!</p>
+
+          <!-- Duo Mascot Celebration -->
+          <div class="mascot-container final-mascot">
+            <div id="final-mascot-container"></div>
+          </div>
+
+          <!-- Stats Grid -->
+          <div class="stats-summary-grid">
+            <div class="stat-card card-3d bg-gold">
+              <i class="fa-solid fa-bolt card-icon"></i>
+              <span class="stat-value" id="res-xp">+0</span>
+              <span class="stat-label">경험치 획득</span>
+            </div>
+            
+            <div class="stat-card card-3d bg-blue">
+              <i class="fa-solid fa-clock card-icon"></i>
+              <span class="stat-value" id="res-time">00:00</span>
+              <span class="stat-label">학습 시간</span>
+            </div>
+
+            <div class="stat-card card-3d bg-green">
+              <i class="fa-solid fa-circle-check card-icon"></i>
+              <span class="stat-value" id="res-accuracy">100%</span>
+              <span class="stat-label">정답률</span>
+            </div>
+          </div>
+
+          <!-- Streak Boost Card -->
+          <div class="streak-boost-card card-3d" id="streak-boost-box" style="display: none;">
+            <i class="fa-solid fa-fire fire-icon large"></i>
+            <div>
+              <h3 id="streak-boost-title">스트릭 1일 돌파!</h3>
+              <p>내일도 잊지 말고 더웰니스 학습을 지속하세요!</p>
+            </div>
+          </div>
+
+          <div class="action-buttons-group">
+            <button id="res-home-btn" class="primary-btn btn-3d size-large">계속하기</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- MODAL: SETTINGS -->
+    <div id="settings-modal" class="modal-overlay">
+      <div class="modal-container card-3d">
+        <div class="modal-header">
+          <h2><i class="fa-solid fa-gear"></i> 학습 설정</h2>
+          <button class="modal-close-btn" id="settings-close-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+
+
+          <!-- Theme & Sound -->
+          <div class="settings-group">
+            <h3>환경 설정</h3>
+            <div class="settings-row flex-between">
+              <span>다크 모드</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="dark-mode-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="settings-row flex-between">
+              <span>효과음 사운드</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="sound-toggle" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+
+          
+          <button id="reset-progress-btn" class="danger-btn btn-3d">학습 진도 전체 초기화</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: LEADERBOARD -->
+    <div id="leaderboard-modal" class="modal-overlay">
+      <div class="modal-container card-3d">
+        <div class="modal-header">
+          <h2><i class="fa-solid fa-trophy text-gold"></i> 더웰니스 리더보드</h2>
+          <button class="modal-close-btn" id="leaderboard-close-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+          <p class="leaderboard-desc">더웰니스의원에 관한 퀴즈의 총 획득 XP 랭킹입니다.</p>
+          
+          <!-- Ranking List -->
+          <div class="leaderboard-list" id="leaderboard-rankings-list">
+            <!-- Rank items will be generated here -->
+            <div class="loading-state">
+              <i class="fa-solid fa-circle-notch fa-spin"></i> 순위를 불러오는 중...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+
+  <!-- Game Logic script -->
+  <script src="app.js"></script>
+</body>
+</html>
