@@ -840,6 +840,12 @@ const DEFAULT_LOCAL_CARDS = [
     description: "피부과 데스크 코디네이터 업무 관련 재미있는 퀴즈를 맞히고 실력을 향상하는 퀴즈 사이트로 이동합니다.",
     site_url: "./quiz/index.html",
     icon_name: "help-circle"
+  },
+  {
+    title: "더웰니스 실무학습페이지",
+    description: "더웰니스 데스크 코디네이터 업무 매뉴얼 및 실무 노하우를 당근 마켓 스타일로 재미있게 학습하는 페이지입니다.",
+    site_url: "./CarrotSite/index.html",
+    icon_name: "graduation-cap"
   }
 ];
 

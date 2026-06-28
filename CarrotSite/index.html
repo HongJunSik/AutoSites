@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>더웰니스의원 스태프 트레이닝 포탈</title>
+  <meta name="description" content="더웰니스의원 스태프들을 위한 필수 리프팅, 스킨부스터 시술 정보 및 상담 응대 프로토콜 학습 포탈">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Premium Sticky Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <div class="logo-group">
+        <span class="logo-main">The Wellness</span>
+        <span class="logo-sub">Staff Training</span>
+      </div>
+      
+      <div class="header-meta">
+        <nav class="nav-menu" aria-label="메인 메뉴">
+          <button class="nav-link active" data-target="training">학습 센터</button>
+          <button class="nav-link" data-target="quiz">지식 테스트</button>
+        </nav>
+        
+        <button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="테마 전환">
+          <!-- Sun Icon (for dark mode) -->
+          <svg class="sun-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.364l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path></svg>
+          <!-- Moon Icon (for light mode) -->
+          <svg class="moon-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+        </button>
+        
+        <div class="progress-widget" id="header-progress-widget">
+          <span id="progress-percentage-text">0% 완료</span>
+          <div class="progress-bar-container" aria-label="학습 진척도">
+            <div class="progress-bar-fill" id="progress-bar-fill-el"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main>
+    <!-- Section 1: Learning Portal -->
+    <div id="learning-portal-section" class="fade-in-element">
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="container">
+          <span class="hero-tag">더웰니스의원 에센셜</span>
+          <h1 class="hero-title serif-title">청결하고 세련된 프리미엄 케어를 위한 스태프 학습 가이드</h1>
+          <p class="hero-desc">"더웰니스의원의 품격은 스태프 개개인의 완벽한 지식과 태도로부터 시작됩니다."</p>
+          
+          <!-- Search Control -->
+          <div class="search-control-wrapper">
+            <svg class="search-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <input type="text" id="search-input" class="search-input-field" placeholder="시술 이름, 기기 정보, 상담 멘트 등 검색..." aria-label="학습 콘텐츠 검색">
+          </div>
+        </div>
+      </section>
+
+      <!-- Category Filter Navigation -->
+      <div class="container">
+        <nav class="category-nav-scroll" id="category-filter-container" aria-label="카테고리 필터">
+          <!-- Rendered dynamically by app.js -->
+        </nav>
+      </div>
+
+      <!-- Training Cards Section -->
+      <section class="container">
+        <div class="dashboard-grid">
+          <div class="learning-section">
+            <div class="section-header-block">
+              <h2 class="section-title serif-title">실무 교육 모듈</h2>
+              <span class="section-counter">더웰니스 프로토콜</span>
+            </div>
+            
+            <div id="cards-display-container" class="learning-section">
+              <!-- Rendered dynamically by app.js -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Section 2: Quiz Portal -->
+    <div id="quiz-portal-section" class="container fade-in-element" style="display: none; padding-top: 60px;">
+      <!-- Quiz Intro State -->
+      <div class="quiz-widget-card" id="quiz-intro-box">
+        <div class="quiz-icon-holder">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.62 48.62 0 0112 20.904a48.62 48.62 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0112 13.489a50.702 50.702 0 017.74-3.342M12 13.489v-8.87m0 20.198v-3.007M0 10.428l2.965.741m0 0l.674 3.708m-3.639-4.449L3.64 14.88"></path>
+          </svg>
+        </div>
+        <h2 class="quiz-main-title serif-title text-gold">더웰니스의원 자가 지식 테스트</h2>
+        <p class="quiz-sub-desc">
+          시술 종류, 장비 작동 프로토콜, 환자 상담 대응법 등 에센셜 지식을 얼마나 습득했는지 테스트해 보세요.<br>
+          총 5문항의 랜덤/고정 문제로 구성되어 있으며, 모든 문제를 푼 후 합격 여부와 해설을 확인할 수 있습니다.
+        </p>
+        <button class="quiz-primary-btn" id="start-quiz-btn">테스트 시작하기</button>
+      </div>
+
+      <!-- Quiz Active State -->
+      <div class="active-quiz-frame" id="quiz-active-box" style="display: none;">
+        <div class="quiz-step-progress-row">
+          <span class="serif-title" style="font-size: 1.1rem; color: var(--accent-dark); font-weight: 600;">THE WELLNESS KNOWLEDGE TEST</span>
+          <span id="quiz-question-num" style="font-weight: 600;">질문 1 / 5</span>
+        </div>
+        
+        <div class="quiz-question-box" id="quiz-question-text">
+          <!-- Question text inserted here -->
+        </div>
+        
+        <div class="quiz-option-selectors-list" id="quiz-options-list">
+          <!-- Options inserted here -->
+        </div>
+        
+        <div id="quiz-explanation-container" style="display: none; margin-top: 10px;">
+          <div class="quiz-explanation-box" id="quiz-explanation-text">
+            <!-- Explanation text inserted here -->
+          </div>
+        </div>
+        
+        <div class="quiz-footer-actions">
+          <span style="font-size: 0.85rem; color: var(--text-tertiary);">답안을 선택하면 해설이 열립니다.</span>
+          <button class="quiz-primary-btn" id="quiz-next-btn" style="padding: 10px 24px; font-size: 0.9rem;">다음 질문으로</button>
+        </div>
+      </div>
+
+      <!-- Quiz Results State -->
+      <div class="quiz-widget-card" id="quiz-results-box" style="display: none;">
+        <div class="quiz-icon-holder" style="color: var(--medical-sage); background-color: var(--medical-sage-light);">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21a3.745 3.745 0 01-3.297-1.593 3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"></path>
+          </svg>
+        </div>
+        <h2 class="quiz-main-title serif-title text-gold" id="quiz-score-summary">테스트 결과</h2>
+        <p class="quiz-sub-desc" id="quiz-feedback-text">
+          결과에 맞는 피드백이 제공됩니다.
+        </p>
+        <button class="quiz-primary-btn" id="restart-quiz-btn">테스트 다시보기</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Premium Footer -->
+  <footer class="site-footer">
+    <div class="container footer-layout">
+      <div class="footer-brand-info">
+        <span class="footer-clinic-name">더웰니스의원</span>
+        <p>서울 서초구 신반포로 219 8동 2층 (반포역 4번 출구에서 249m)</p>
+        <p>대표전화: 02-597-5977 | 주차: 건물 뒤쪽 옥외주차장 완비 (주차권 지원)</p>
+      </div>
+      
+      <div class="footer-nav-links">
+        <a href="https://thewellnessclinic.co.kr/" target="_blank" rel="noopener noreferrer">공식 웹사이트</a>
+        <a href="https://blog.naver.com/drwellness1" target="_blank" rel="noopener noreferrer">네이버 블로그</a>
+        <a href="https://www.youtube.com/@drwellness5977" target="_blank" rel="noopener noreferrer">공식 유튜브</a>
+        <a href="https://pf.kakao.com/_Ymvxexj" target="_blank" rel="noopener noreferrer">카카오톡 상담</a>
+      </div>
+    </div>
+    <div class="container footer-copyright">
+      <p>&copy; 2026 더웰니스의원 (The Wellness Clinic). All Rights Reserved. Staff Training Portal.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
