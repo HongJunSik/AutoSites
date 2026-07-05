@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>더웰니스 7월 HELLO! SUMMER 이벤트</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: Ocean Breeze (Slate-50 bg, Cyan-500 & Blue-600 accents, Slate-800 text for calm, clinical, summer harmony) -->
+    <!-- Application Structure Plan: The application is designed as an interactive exploration dashboard. Rather than a static list, users are presented with a category filter system ("나에게 맞는 시술 찾기") to reduce cognitive overload and find treatments relevant to their specific concerns (Lifting, Body, Skin, etc.). A dynamic grid displays the filtered items as clean, digestible cards. Below the interactive grid, a data visualization section ("스킨부스터 한눈에 보기") uses a bar chart to provide a quick comparative price analysis of the most popular category, aiding in decision-making. This structure transforms a dense promotional poster into a user-centric, goal-oriented digital experience. -->
+    <!-- Visualization & Content Choices: 
+    1. Interactive Filter Grid (Goal: Organize/Explore -> Presentation: HTML/Tailwind Grid + JS -> Interaction: Click filters to dynamically update DOM -> Justification: Replaces scanning a dense image with targeted browsing).
+    2. Price Comparison Chart (Goal: Compare -> Presentation: Horizontal Bar Chart using Chart.js/Canvas -> Interaction: Tooltip hover for exact prices -> Justification: Visualizing prices makes budget planning easier; horizontal bars are best for long labels. NO SVG/Mermaid).
+    3. Procedure Detail Cards (Goal: Inform -> Presentation: Structured HTML Cards -> Interaction: Hover effects -> Justification: Breaks down complex info like "3STEP" or packaged deals into readable chunks). -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            background-color: #f8fafc; 
+            color: #1e293b;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        .filter-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .filter-btn.active {
+            background-color: #2563eb; 
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4);
+        }
+
+        .card-enter {
+            animation: fadeIn 0.4s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen pb-20">
+
+    <header class="bg-gradient-to-r from-cyan-50 to-blue-100 py-16 px-4 text-center border-b border-blue-200">
+        <div class="max-w-4xl mx-auto">
+            <span class="text-blue-600 font-bold tracking-wider text-sm md:text-base mb-2 block">💖 여름과 함께하는 역대급 할인 💖</span>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-slate-800 mb-4 tracking-tight">HELLO! SUMMER</h1>
+            <p class="text-slate-600 text-lg md:text-xl font-medium mb-6">더웰니스 7월 인기 시술을 한눈에, 더 특별하게</p>
+            <div class="inline-block bg-white px-6 py-2 rounded-full shadow-sm text-sm font-semibold text-slate-500 border border-slate-200">
+                🗓 기간 : ~ 26. 07. 31(금) 까지 <span class="mx-2">|</span> VAT 별도
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 mt-12">
+        
+        <section class="mb-16">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-slate-800 mb-3">맞춤형 시술 탐색기</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto">
+                    7월 한 달간 진행되는 다양한 프로모션을 카테고리별로 모아보세요. 
+                    버튼을 클릭하여 현재 나의 피부 및 바디 고민에 가장 알맞은 혜택을 빠르고 직관적으로 찾아볼 수 있습니다.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-3 mb-10" id="filter-container">
+                <button data-filter="all" class="filter-btn active px-5 py-2.5 rounded-full border border-slate-300 bg-white text-slate-700 font-medium hover:bg-slate-50">🌟 전체보기</button>
+                <button data-filter="lifting" class="filter-btn px-5 py-2.5 rounded-full border border-slate-300 bg-white text-slate-700 font-medium hover:bg-slate-50">💆‍♀️ 리프팅/안티에이징</button>
+                <button data-filter="booster" class="filter-btn px-5 py-2.5 rounded-full border border-slate-300 bg-white text-slate-700 font-medium hover:bg-slate-50">💧 스킨부스터/재생</button>
+                <button data-filter="body" class="filter-btn px-5 py-2.5 rounded-full border border-slate-300 bg-white text-slate-700 font-medium hover:bg-slate-50">👙 썸머 바디라인</button>
+                <button data-filter="pore" class="filter-btn px-5 py-2.5 rounded-full border border-slate-300 bg-white text-slate-700 font-medium hover:bg-slate-50">✨ 모공/미백/색소</button>
+                <button data-filter="petit" class="filter-btn px-5 py-2.5 rounded-full border border-slate-300 bg-white text-slate-700 font-medium hover:bg-slate-50">💉 쁘띠/핫딜</button>
+            </div>
+
+            <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-200 mb-12">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-bold text-slate-800 mb-3">📊 스킨부스터 라인업 가격 분석</h2>
+                <p class="text-slate-500 max-w-2xl mx-auto">
+                    수분, 탄력, 피부결 등 다양한 고민에 맞춘 '더웰니스 스킨부스터' 라인업의 시작 가격을 비교해보세요. 
+                    합리적인 가격으로 내 피부에 맞는 최적의 솔루션을 선택할 수 있습니다.
+                </p>
+            </div>
+            
+            <div class="w-full flex justify-center">
+                <div class="chart-container">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const eventData = [
+            { id: 1, category: "lifting", tag: "도입 특집", title: "울트라클리어 1회", desc: "흉터 레이저의 황제, 대중화 선언! 여드름/수술 흉터 개선 및 넓은 모공 치료", price: "30", unit: "만원~", extra: "3cm 가로 기준" },
+            { id: 2, category: "lifting", tag: "전국 최저가", title: "덴서티 600샷", desc: "이영애 Pick 안아픈 프리미엄 리프팅", price: "149", unit: "만원~", extra: "알차게 600샷" },
+            { id: 3, category: "lifting", tag: "BEST 추천", title: "FULL 울써마지", desc: "울쎄라 프라임 300샷 + 써마지 FLX 600샷 + 무통수면 + LDM + 스킨보톡스", price: "280", unit: "만원", extra: "감사제: 10만원 바디 시술권 증정" },
+            { id: 4, category: "lifting", tag: "인기 시술", title: "울쎄라2 프라임 300샷", desc: "강력한 초음파 리프팅으로 탄력 개선", price: "99", unit: "만원", extra: "" },
+            
+            { id: 5, category: "booster", tag: "런칭 특가", title: "고우리 1시린지", desc: "전국 품절, 물량 어렵게 확보한 대세 스킨부스터", price: "59", unit: "만원~", extra: "" },
+            { id: 6, category: "booster", tag: "자체 개발", title: "3STEP 코어 줄기세포", desc: "생착주사 ➔ 고순도 줄기세포주사 ➔ 재생케어", price: "80", unit: "만원~", extra: "30cc 기준" },
+            { id: 7, category: "booster", tag: "30% 할인", title: "쥬브젠 3STEP 새살재생", desc: "깊은 주름 자연 개선. 진피재생술 + 융착 박리술 + 쥬브젠 플라즈마", price: "할인특가", unit: "", extra: "리터치 1회 포함" },
+            { id: 8, category: "booster", tag: "7월 추천", title: "리쥬란 2cc", desc: "수분, 탄력, 피부결 고민을 위한 대표 스킨부스터", price: "20", unit: "만원", extra: "" },
+            { id: 9, category: "booster", tag: "BEST 인기", title: "스컬트라 1병", desc: "피부 속 콜라겐 생성을 촉진하는 프리미엄 부스터", price: "99", unit: "만원", extra: "" },
+
+            { id: 10, category: "body", tag: "슬림바디", title: "승모근/종아리/다한증 보톡스", desc: "핫한 여름을 위한 바디라인 특가 혜택 (100유닛 기준)", price: "9.9", unit: "만원", extra: "" },
+            { id: 11, category: "body", tag: "자생세포 소멸", title: "바디피팅 60kJ", desc: "누워만 있으면 끝! 60kJ 시술 시 20kJ 추가 혜택", price: "49", unit: "만원", extra: "지방분해 추가시 69만원" },
+            { id: 12, category: "body", tag: "바디 웰핏", title: "지방분해주사 2+1", desc: "팔뚝/복부/러브핸들/허벅지/종아리 중 택 1", price: "69", unit: "만원", extra: "" },
+
+            { id: 13, category: "pore", tag: "올인원", title: "모공 쫀쫀 올인원", desc: "벌어지고 늘어진 모공을 탄탄하게! 포텐자(펌핑팁) + 쥬베룩볼륨 3cc", price: "40", unit: "만원", extra: "" },
+            { id: 14, category: "pore", tag: "올인원", title: "미백 올인원 3주", desc: "피코토닝, 엑셀V레이저 등 칙칙한 피부톤부터 잡티까지 한번에", price: "59", unit: "만원", extra: "" },
+            { id: 15, category: "pore", tag: "여름 전용", title: "아이스 트리플 리팟", desc: "자외선 걱정 NO! 흑자 제거, 재발 방지, 재생, 필수홈케어까지", price: "30", unit: "만원~", extra: "5mm 기준 / 평생 보증제" },
+
+            { id: 16, category: "petit", tag: "핫딜", title: "국산 주름보톡스", desc: "이마/미간/눈가/콧등 중 택 1. 가격 부담은 낮추고 만족도는 UP", price: "2.5", unit: "만원", extra: "" },
+            { id: 17, category: "petit", tag: "핫딜", title: "기미주사 1+1", desc: "환한 피부를 위한 특별 구성", price: "9", unit: "만원", extra: "" },
+            { id: 18, category: "petit", tag: "핫딜", title: "볼륨 립쥬란", desc: "입술 볼륨과 입술 잔주름 동시 개선", price: "19", unit: "만원", extra: "" },
+            { id: 19, category: "petit", tag: "핫딜", title: "원데이 색소 올킬", desc: "풀페이스. 엑셀V+어븀야그(점, 편평사마귀, 쥐젖)", price: "45", unit: "만원", extra: "원데이 패키지" }
+        ];
+
+        function createCardHTML(item, index) {
+            const delay = index * 0.05;
+            let priceDisplay = `<span class="text-3xl font-extrabold text-blue-600">${item.price}</span><span class="text-slate-500 font-medium ml-1">${item.unit}</span>`;
+            
+            if(item.price === "할인특가") {
+                priceDisplay = `<span class="text-2xl font-extrabold text-blue-600">30% 할인</span>`;
+            }
+
+            return `
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow relative overflow-hidden card-enter flex flex-col h-full" style="animation-delay: ${delay}s;">
+                    <div class="absolute top-0 right-0 bg-cyan-100 text-cyan-800 text-xs font-bold px-3 py-1.5 rounded-bl-xl z-10">
+                        ${item.tag}
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2 mt-2 leading-tight">${item.title}</h3>
+                        <p class="text-slate-500 text-sm mb-4 leading-relaxed">${item.desc}</p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-50 mt-auto">
+                        <div class="flex items-end justify-between">
+                            <div>${priceDisplay}</div>
+                            ${item.extra ? `<span class="text-xs text-slate-400 bg-slate-50 px-2 py-1 rounded">${item.extra}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCards(filterType) {
+            const grid = document.getElementById('cards-grid');
+            grid.innerHTML = '';
+            
+            const filteredData = filterType === 'all' 
+                ? eventData 
+                : eventData.filter(item => item.category === filterType);
+
+            if (filteredData.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-400">해당 카테고리의 이벤트가 없습니다.</div>`;
+                return;
+            }
+
+            filteredData.forEach((item, index) => {
+                grid.innerHTML += createCardHTML(item, index);
+            });
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            
+            const chartData = {
+                labels: ['아이리쥬란 1cc', '리쥬란 2cc', '콜라겐 레티젠', '리바이브 1cc', '리투오 6cc', '스컬트라 1병'],
+                prices: [19, 20, 29, 45, 59, 99]
+            };
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        label: '시술 가격 (만원)',
+                        data: chartData.prices,
+                        backgroundColor: 'rgba(56, 189, 248, 0.6)', 
+                        borderColor: 'rgba(2, 132, 199, 1)',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        hoverBackgroundColor: 'rgba(37, 99, 235, 0.8)'
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', 
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: { size: 14, family: 'Pretendard' },
+                            bodyFont: { size: 14, family: 'Pretendard', weight: 'bold' },
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return ' ' + context.parsed.x + ' 만원';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: '#f1f5f9',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { family: 'Pretendard' },
+                                color: '#64748b',
+                                callback: function(value) {
+                                    return value + '만';
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: '가격 (만원)',
+                                color: '#94a3b8',
+                                font: { family: 'Pretendard', size: 12 }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { family: 'Pretendard', weight: '500', size: 13 },
+                                color: '#334155'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCards('all');
+            initChart();
+
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    filterBtns.forEach(b => {
+                        b.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow-md');
+                        b.classList.add('bg-white', 'text-slate-700');
+                        b.style.backgroundColor = '';
+                        b.style.color = '';
+                    });
+                    
+                    const clickedBtn = e.currentTarget;
+                    clickedBtn.classList.add('active');
+                    clickedBtn.classList.remove('bg-white', 'text-slate-700');
+                    
+                    const filterValue = clickedBtn.getAttribute('data-filter');
+                    renderCards(filterValue);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

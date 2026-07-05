@@ -842,10 +842,22 @@ const DEFAULT_LOCAL_CARDS = [
     icon_name: "help-circle"
   },
   {
-    title: "더웰니스 실무학습페이지",
-    description: "더웰니스 데스크 코디네이터 업무 매뉴얼 및 실무 노하우를 당근 마켓 스타일로 재미있게 학습하는 페이지입니다.",
-    site_url: "./CarrotSite/index.html",
-    icon_name: "graduation-cap"
+    title: "더웰니스 원내 스태프 교육관",
+    description: "원내 공식 교육 PDF 자료만을 100% 탑재하여 학습하는 프리미엄 미니멀리즘 스터디 룸입니다.",
+    site_url: "./Study/index.html",
+    icon_name: "book-open"
+  },
+  {
+    title: "매달 이벤트",
+    description: "더웰니스 의원 매달 진행되는 이벤트와 프로모션 정보를 한눈에 확인하고 비교 분석합니다.",
+    site_url: "./Month_Event/7month.html",
+    icon_name: "calendar"
+  },
+  {
+    title: "내현 업데이트",
+    description: "예약 조회 엑셀 파일을 업로드하여 중복 및 해외 예약을 제거하고 내원현황표 형식에 맞게 변환합니다.",
+    site_url: "./nhupdate/index.html",
+    icon_name: "refresh-cw"
   }
 ];
 
