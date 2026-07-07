@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>네오 브루탈리스트 - 오늘 할 일 체크리스트</title>
+  <meta name="description" content="네오 브루탈리즘 스타일의 감각적이고 다이내믹한 오늘 할 일 체크리스트 웹앱입니다.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Floating Decorative Particles -->
+  <div class="particle" style="top: 10%; left: 15%; animation-delay: 0s;"></div>
+  <div class="particle" style="top: 75%; left: 8%; animation-delay: 2s; width: 14px; height: 14px;"></div>
+  <div class="particle" style="top: 25%; right: 12%; animation-delay: 4s; width: 8px; height: 8px;"></div>
+  <div class="particle" style="top: 80%; right: 18%; animation-delay: 1s; width: 12px; height: 12px;"></div>
+
+  <!-- Theme Toggle Button -->
+  <button id="themeToggle" class="theme-toggle-btn" aria-label="다크 모드 토글">
+    <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <!-- Sun icon by default, will toggle to moon in dark mode -->
+      <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.02 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-12.37c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41zm-12.37 12.37c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41z"/>
+    </svg>
+  </button>
+
+  <div class="container">
+    
+    <!-- Floating Badges on Desktop -->
+    <div class="floating-badge badge-1">
+      ⚡ Stay Focused!
+    </div>
+    <div class="floating-badge badge-2">
+      🔥 Get It Done
+    </div>
+
+    <!-- Main Card App -->
+    <main id="appCard" class="app-card neo-box">
+      
+      <!-- Header -->
+      <header class="app-header">
+        <h1 class="app-title">DAILY TO-DO</h1>
+        <p class="app-subtitle">오늘 할 일 체크리스트</p>
+      </header>
+
+      <!-- Progress Section -->
+      <section class="progress-container">
+        <div class="progress-header">
+          <span>오늘의 성취율</span>
+          <span id="progressText">0%</span>
+        </div>
+        <div class="progress-bar-wrapper">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </section>
+
+      <!-- Todo Add Form -->
+      <section>
+        <form id="todoForm" class="todo-form">
+          <div class="todo-input-wrapper">
+            <input 
+              type="text" 
+              id="todoInput" 
+              class="todo-input" 
+              placeholder="여기에 새로운 할 일을 적으세요..." 
+              required
+              maxlength="40"
+              autocomplete="off"
+            >
+          </div>
+          
+          <select id="categorySelect" class="category-select" aria-label="카테고리 선택">
+            <option value="work" selected>Work</option>
+            <option value="life">Life</option>
+            <option value="study">Study</option>
+            <option value="health">Health</option>
+          </select>
+
+          <button type="submit" class="neo-btn" aria-label="할 일 추가">
+            추가
+          </button>
+        </form>
+      </section>
+
+      <!-- Filter Bar -->
+      <section class="filter-container">
+        <button class="filter-btn active" data-filter="all">전체</button>
+        <button class="filter-btn" data-filter="work">💼 Work</button>
+        <button class="filter-btn" data-filter="life">🏠 Life</button>
+        <button class="filter-btn" data-filter="study">📚 Study</button>
+        <button class="filter-btn" data-filter="health">💪 Health</button>
+      </section>
+
+      <!-- Todo List -->
+      <section>
+        <ul id="todoList" class="todo-list">
+          <!-- Dynamically populated from JS -->
+        </ul>
+        
+        <!-- Empty State (Shown when no todos exist) -->
+        <div id="emptyState" class="empty-state">
+          <span class="empty-icon">☕</span>
+          <p>오늘 등록된 할 일이 없습니다.</p>
+          <p style="font-size: 0.85rem; opacity: 0.7;">할 일을 추가하고 완주해 보세요!</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

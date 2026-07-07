@@ -1,0 +1,610 @@
+/* Google Fonts: Outfit */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap');
+
+:root {
+  --bg-color: #f4f0fa;
+  --text-color: #1a1a1a;
+  --border-color: #000000;
+  --card-bg: #ffffff;
+  
+  /* Neon Brutalism Color Palette */
+  --color-yellow: #facc15;
+  --color-green: #22c55e;
+  --color-rose: #fb7185;
+  --color-purple: #c084fc;
+  --color-cyan: #22d3ee;
+  --color-orange: #fb923c;
+  
+  --shadow-offset-btn: 4px;
+  --shadow-offset-card: 6px;
+  --border-width: 3px;
+  
+  --primary-accent: var(--color-purple);
+}
+
+/* Dark Mode Overrides */
+[data-theme="dark"] {
+  --bg-color: #121214;
+  --text-color: #f3f4f6;
+  --card-bg: #1e1e24;
+  --border-color: #ffffff;
+  --primary-accent: #a855f7;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Outfit', sans-serif;
+  user-select: none;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow-x: hidden;
+  padding: 2rem 1rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Background Grid Patterns & Particles */
+body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--border-color) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+  opacity: 0.08;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Floating Decorative Particles */
+.particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: var(--border-color);
+  opacity: 0.15;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: float-particle 15s infinite ease-in-out;
+}
+
+@keyframes float-particle {
+  0%, 100% {
+    transform: translateY(0) translateX(0) scale(1);
+  }
+  50% {
+    transform: translateY(-40px) translateX(20px) scale(1.2);
+  }
+}
+
+/* Neo Brutalism Box Styles */
+.neo-box {
+  background-color: var(--card-bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: var(--shadow-offset-card) var(--shadow-offset-card) 0px 0px var(--border-color);
+  transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  position: relative;
+}
+
+/* Base interactive buttons */
+.neo-btn {
+  background-color: var(--color-yellow);
+  color: #000;
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 900;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-offset-btn) var(--shadow-offset-btn) 0px 0px var(--border-color);
+  transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.neo-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: calc(var(--shadow-offset-btn) + 2px) calc(var(--shadow-offset-btn) + 2px) 0px 0px var(--border-color);
+}
+
+.neo-btn:active {
+  transform: translate(var(--shadow-offset-btn), var(--shadow-offset-btn));
+  box-shadow: 0px 0px 0px 0px var(--border-color);
+}
+
+/* Main Container styling */
+.container {
+  width: 100%;
+  max-width: 540px;
+  position: relative;
+  z-index: 10;
+  perspective: 1000px; /* For 3D Tilt */
+}
+
+.app-card {
+  padding: 2.25rem 2rem;
+  width: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Header design */
+.app-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.app-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+  display: inline-block;
+  transform: rotate(-1deg);
+  border: var(--border-width) solid var(--border-color);
+  background-color: var(--color-purple);
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  box-shadow: 4px 4px 0px 0px var(--border-color);
+}
+
+.app-subtitle {
+  font-size: 1rem;
+  font-weight: 700;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Progress Section */
+.progress-container {
+  background-color: var(--card-bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 4px 4px 0px 0px var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 900;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+}
+
+#progressText {
+  transition: color 0.4s ease;
+}
+
+.progress-bar-wrapper {
+  height: 20px;
+  background-color: var(--card-bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background-color: var(--color-green);
+  transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.4s ease;
+  border-right: var(--border-width) solid var(--border-color);
+}
+
+/* Todo Form */
+.todo-form {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.todo-input-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.todo-input {
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
+  background-color: var(--card-bg);
+  box-shadow: 4px 4px 0px 0px var(--border-color);
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.todo-input:focus {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px 0px var(--border-color);
+}
+
+.todo-input::placeholder {
+  opacity: 0.5;
+  color: var(--text-color);
+}
+
+.category-select {
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 8px;
+  padding: 0 1rem;
+  font-weight: 800;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  box-shadow: 4px 4px 0px 0px var(--border-color);
+  cursor: pointer;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.category-select:focus {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px 0px var(--border-color);
+}
+
+/* Category Filter Bar */
+.filter-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.filter-container::-webkit-scrollbar {
+  height: 0px; /* Hide scrollbar */
+}
+
+.filter-btn {
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 900;
+  cursor: pointer;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  box-shadow: 2px 2px 0px 0px var(--border-color);
+  transition: all 0.1s ease;
+  text-transform: uppercase;
+}
+
+.filter-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px 0px var(--border-color);
+}
+
+.filter-btn.active {
+  background-color: var(--color-cyan);
+  color: #000;
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px 0px var(--border-color);
+}
+
+/* Todo List styling */
+.todo-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+/* Custom Scrollbar for list */
+.todo-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.todo-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.todo-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+/* Todo Item */
+.todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.25rem;
+  background-color: var(--card-bg);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 4px 4px 0px 0px var(--border-color);
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform, opacity;
+}
+
+.todo-item:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px var(--border-color);
+}
+
+.todo-item.completed {
+  opacity: 0.65;
+  background-color: #f9f9f9;
+}
+[data-theme="dark"] .todo-item.completed {
+  background-color: #17171d;
+}
+
+.todo-item-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+/* Custom Checkbox */
+.todo-checkbox-wrapper {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.todo-checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkbox-visual {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 24px;
+  width: 24px;
+  background-color: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0px 0px var(--border-color);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todo-checkbox-wrapper:hover .checkbox-visual {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px 0px var(--border-color);
+}
+
+.todo-checkbox:checked ~ .checkbox-visual {
+  background-color: var(--color-green);
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px 0px var(--border-color);
+}
+
+/* Drawing a bold custom CSS checkmark for higher visibility */
+.checkbox-visual::after {
+  content: "";
+  width: 5px;
+  height: 10px;
+  border: solid #000000; /* High contrast black checkmark on neon green background */
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg) translate(-1px, -1px);
+  display: none;
+}
+
+.todo-checkbox:checked ~ .checkbox-visual::after {
+  display: block;
+}
+
+/* Todo Text & Line-through animation */
+.todo-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-color);
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.todo-item.completed .todo-text {
+  text-decoration: line-through;
+  text-decoration-thickness: 3px;
+  text-decoration-color: var(--border-color);
+}
+
+
+/* Category Badge inside Item */
+.item-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 900;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  box-shadow: 1px 1px 0px 0px var(--border-color);
+  text-transform: uppercase;
+}
+
+/* Action Buttons (Delete) */
+.delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  border: 2px solid transparent;
+}
+
+.delete-btn:hover {
+  background-color: var(--color-rose);
+  border-color: var(--border-color);
+  box-shadow: 2px 2px 0px 0px var(--border-color);
+  transform: translate(-1px, -1px);
+}
+
+.delete-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px 0px var(--border-color);
+}
+
+.delete-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--text-color);
+  transition: stroke 0.15s ease;
+}
+
+.delete-btn:hover svg {
+  stroke: #fff;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  font-weight: 700;
+  opacity: 0.5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+}
+
+/* Decorative Floating Badges */
+.floating-badge {
+  position: absolute;
+  padding: 0.5rem 1rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 3px 3px 0px 0px var(--border-color);
+  pointer-events: none;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.badge-1 {
+  background-color: var(--color-rose);
+  top: 15%;
+  left: -90px;
+  transform: rotate(-10deg);
+  animation: float-badge-1 6s infinite ease-in-out;
+}
+
+.badge-2 {
+  background-color: var(--color-yellow);
+  bottom: 20%;
+  right: -90px;
+  transform: rotate(8deg);
+  animation: float-badge-2 8s infinite ease-in-out;
+}
+
+@keyframes float-badge-1 {
+  0%, 100% {
+    transform: translateY(0) rotate(-10deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(-8deg);
+  }
+}
+
+@keyframes float-badge-2 {
+  0%, 100% {
+    transform: translateY(0) rotate(8deg);
+  }
+  50% {
+    transform: translateY(15px) rotate(11deg);
+  }
+}
+
+/* Theme Toggle Button (Light/Dark Mode) */
+.theme-toggle-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: var(--border-width) solid var(--border-color);
+  background-color: var(--card-bg);
+  box-shadow: 3px 3px 0px 0px var(--border-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.theme-toggle-btn:hover {
+  transform: translate(-2px, -2px) rotate(15deg);
+  box-shadow: 5px 5px 0px 0px var(--border-color);
+}
+
+.theme-toggle-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0px 0px var(--border-color);
+}
+
+.theme-toggle-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--text-color);
+}
+
+/* Responsiveness adjustments */
+@media (max-width: 768px) {
+  .floating-badge {
+    display: none; /* Hide floating badges on mobile */
+  }
+  body {
+    padding: 3rem 1rem 1rem 1rem;
+  }
+  .app-card {
+    padding: 1.5rem 1.25rem;
+  }
+  .app-title {
+    font-size: 2rem;
+  }
+}
