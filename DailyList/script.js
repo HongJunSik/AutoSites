@@ -5,7 +5,10 @@ import {
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged, 
-  updateProfile 
+  updateProfile,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  deleteUser
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { 
   getFirestore, 
@@ -160,6 +163,11 @@ document.addEventListener('DOMContentLoaded', () => {
   loginForm.addEventListener('submit', handleLogin);
   registerForm.addEventListener('submit', handleRegister);
   logoutBtn.addEventListener('click', handleLogout);
+  
+  const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+  if (deleteAccountBtn) {
+    deleteAccountBtn.addEventListener('click', handleDeleteAccount);
+  }
 
   // Todo Operations (Original event bindings)
   todoForm.addEventListener('submit', handleAddTodo);
@@ -300,6 +308,57 @@ async function handleLogout() {
   } catch (error) {
     console.error("로그아웃 실패:", error);
     alert("로그아웃에 실패했습니다.");
+  } finally {
+    showLoading(false);
+  }
+}
+
+// 계정 영구 삭제 (회원 탈퇴 및 개인정보 완전 파기)
+async function handleDeleteAccount() {
+  if (!currentUser) return;
+
+  const password = prompt("보안 및 본인 확인을 위해 비밀번호를 입력해주세요 ^^");
+  if (password === null) return; // 취소 버튼 클릭 시 종료
+  if (password.trim() === "") {
+    alert("비밀번호가 입력되지 않았습니다 ^^");
+    return;
+  }
+
+  showLoading(true);
+  try {
+    // 1. 보안 재인증 (Re-authentication)
+    const credential = EmailAuthProvider.credential(currentUser.email, password);
+    await reauthenticateWithCredential(currentUser, credential);
+
+    // 2. Firestore 개인 데이터 일괄 영구 삭제 (Batch commit)
+    const batch = writeBatch(db);
+    
+    // 2-1. 할 일 리스트 전체 삭제
+    const todosRef = collection(db, "users", currentUser.uid, "todos");
+    const todosSnapshot = await getDocs(todosRef);
+    todosSnapshot.forEach((todoDoc) => {
+      batch.delete(todoDoc.ref);
+    });
+
+    // 2-2. 사용자 프로필(닉네임 인덱스) 삭제
+    const userDocRef = doc(db, "users", currentUser.uid);
+    batch.delete(userDocRef);
+
+    // 삭제 실행
+    await batch.commit();
+
+    // 3. Firebase Auth 계정 삭제
+    await deleteUser(currentUser);
+
+    alert("계정이 성공적으로 삭제되었습니다 ^^");
+    window.location.reload();
+  } catch (error) {
+    console.error("계정 삭제 실패:", error);
+    if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+      alert("비밀번호가 일치하지 않습니다 ^^");
+    } else {
+      alert(`계정 삭제 처리 중 오류가 발생했습니다.\n\n[에러 코드: ${error.code}]`);
+    }
   } finally {
     showLoading(false);
   }

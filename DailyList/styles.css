@@ -827,3 +827,35 @@ body::before {
 .password-toggle-btn svg {
   stroke: var(--text-color);
 }
+
+/* Delete Account Layout & Design */
+.delete-account-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.delete-account-btn {
+  background-color: var(--color-rose);
+  color: var(--text-color);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.5rem 1.25rem;
+  border: var(--border-width) solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 2px 2px 0px 0px var(--border-color);
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.delete-account-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px 0px var(--border-color);
+}
+
+.delete-account-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0px 0px var(--border-color);
+}
