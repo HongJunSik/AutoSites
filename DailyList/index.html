@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>네오 브루탈리스트 - 오늘 할 일 체크리스트</title>
-  <meta name="description" content="네오 브루탈리즘 스타일의 감각적이고 다이내믹한 오늘 할 일 체크리스트 웹앱입니다.">
+  <meta name="description" content="오늘 할 일 체크리스트 웹앱입니다.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -18,7 +18,6 @@
   <!-- Theme Toggle Button -->
   <button id="themeToggle" class="theme-toggle-btn" aria-label="다크 모드 토글">
     <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <!-- Sun icon by default, will toggle to moon in dark mode -->
       <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.02 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-12.37c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41zm-12.37 12.37c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41z"/>
     </svg>
   </button>
@@ -32,81 +31,170 @@
     <div class="floating-badge badge-2">
       🔥 Get It Done
     </div>
+    <div class="floating-badge badge-user hidden-badge" id="userBadge">
+      👤 닉네임
+    </div>
 
-    <!-- Main Card App -->
+    <!-- Main Card App (Supports 3D Tilt) -->
     <main id="appCard" class="app-card neo-box">
       
-      <!-- Header -->
-      <header class="app-header">
-        <h1 class="app-title">DAILY TO-DO</h1>
-        <p class="app-subtitle">오늘 할 일 체크리스트</p>
-      </header>
+      <!-- ==========================================
+           1. AUTHENTICATION SECTION (Logged Out)
+           ========================================== -->
+      <div id="authSection" class="auth-section">
+        <header class="app-header">
+          <h1 class="app-title">DAILY TO-DO</h1>
+          <p class="app-subtitle" id="authSubtitle">로그인하여 오늘 하루를 관리해 보세요.</p>
+        </header>
 
-      <!-- Progress Section -->
-      <section class="progress-container">
-        <div class="progress-header">
-          <span>오늘의 성취율</span>
-          <span id="progressText">0%</span>
-        </div>
-        <div class="progress-bar-wrapper">
-          <div id="progressBar" class="progress-bar"></div>
-        </div>
-      </section>
-
-      <!-- Todo Add Form -->
-      <section>
-        <form id="todoForm" class="todo-form">
-          <div class="todo-input-wrapper">
-            <input 
-              type="text" 
-              id="todoInput" 
-              class="todo-input" 
-              placeholder="여기에 새로운 할 일을 적으세요..." 
-              required
-              maxlength="40"
-              autocomplete="off"
-            >
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form active-form">
+          <div class="auth-fields">
+            <div class="form-group">
+              <label for="login-username" class="form-label">아이디</label>
+              <div class="todo-input-wrapper">
+                <input type="text" id="login-username" class="todo-input" placeholder="아이디를 입력하세요" required autocomplete="username">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="login-password" class="form-label">비밀번호</label>
+              <div class="todo-input-wrapper password-wrapper">
+                <input type="password" id="login-password" class="todo-input" placeholder="비밀번호를 입력하세요" required autocomplete="current-password">
+                <button type="button" class="password-toggle-btn" data-target="login-password" aria-label="비밀번호 표시 토글">
+                  <!-- Eye Off Icon (Default closed) -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
-          
-          <select id="categorySelect" class="category-select" aria-label="카테고리 선택">
-            <option value="work" selected>Work</option>
-            <option value="life">Life</option>
-            <option value="study">Study</option>
-            <option value="health">Health</option>
-          </select>
-
-          <button type="submit" class="neo-btn" aria-label="할 일 추가">
-            추가
-          </button>
+          <button type="submit" class="neo-btn auth-action-btn">로그인</button>
+          <p class="auth-switch-text">계정이 없으신가요? <button type="button" id="goToRegister">회원가입</button></p>
         </form>
-      </section>
 
-      <!-- Filter Bar -->
-      <section class="filter-container">
-        <button class="filter-btn active" data-filter="all">전체</button>
-        <button class="filter-btn" data-filter="work">💼 Work</button>
-        <button class="filter-btn" data-filter="life">🏠 Life</button>
-        <button class="filter-btn" data-filter="study">📚 Study</button>
-        <button class="filter-btn" data-filter="health">💪 Health</button>
-      </section>
+        <!-- Register Form -->
+        <form id="registerForm" class="auth-form hidden-form">
+          <div class="auth-fields">
+            <div class="form-group">
+              <label for="register-username" class="form-label">아이디</label>
+              <div class="todo-input-wrapper">
+                <input type="text" id="register-username" class="todo-input" placeholder="영문/숫자 혼용 아이디" required autocomplete="username">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="register-nickname" class="form-label">닉네임</label>
+              <div class="todo-input-wrapper">
+                <input type="text" id="register-nickname" class="todo-input" placeholder="표시할 이름 (예: 길동)" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="register-password" class="form-label">비밀번호</label>
+              <div class="todo-input-wrapper password-wrapper">
+                <input type="password" id="register-password" class="todo-input" placeholder="8자 이상 + 영문, 숫자, 특수문자 조합" required autocomplete="new-password">
+                <button type="button" class="password-toggle-btn" data-target="register-password" aria-label="비밀번호 표시 토글">
+                  <!-- Eye Off Icon (Default closed) -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                    <line x1="1" y1="1" x2="23" y2="23"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="neo-btn auth-action-btn">회원가입 및 시작</button>
+          <p class="auth-switch-text">이미 계정이 있으신가요? <button type="button" id="goToLogin">로그인</button></p>
+        </form>
+      </div>
 
-      <!-- Todo List -->
-      <section>
-        <ul id="todoList" class="todo-list">
-          <!-- Dynamically populated from JS -->
-        </ul>
+      <!-- ==========================================
+           2. TODO LIST SECTION (Logged In)
+           ========================================== -->
+      <div id="todoSection" class="todo-section hidden-section">
         
-        <!-- Empty State (Shown when no todos exist) -->
-        <div id="emptyState" class="empty-state">
-          <span class="empty-icon">☕</span>
-          <p>오늘 등록된 할 일이 없습니다.</p>
-          <p style="font-size: 0.85rem; opacity: 0.7;">할 일을 추가하고 완주해 보세요!</p>
-        </div>
-      </section>
+        <!-- Header -->
+        <header class="app-header">
+          <div class="header-top">
+            <div class="date-badge" id="current-date">로딩 중...</div>
+            <button class="filter-btn" id="logoutBtn">로그아웃</button>
+          </div>
+          <h1 class="app-title" id="userTodoTitle">DAILY TO-DO</h1>
+          <p class="app-subtitle">오늘 할 일 체크리스트</p>
+        </header>
+
+        <!-- Progress Section -->
+        <section class="progress-container">
+          <div class="progress-header">
+            <span>오늘의 성취율</span>
+            <span id="progressText">0%</span>
+          </div>
+          <div class="progress-bar-wrapper">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+        </section>
+
+        <!-- Todo Add Form -->
+        <section>
+          <form id="todoForm" class="todo-form">
+            <div class="todo-input-wrapper">
+              <input 
+                type="text" 
+                id="todoInput" 
+                class="todo-input" 
+                placeholder="여기에 새로운 할 일을 적으세요..." 
+                required
+                maxlength="40"
+                autocomplete="off"
+              >
+            </div>
+            
+            <select id="categorySelect" class="category-select" aria-label="카테고리 선택">
+              <option value="work" selected>Work</option>
+              <option value="life">Life</option>
+              <option value="study">Study</option>
+              <option value="health">Health</option>
+            </select>
+
+            <button type="submit" class="neo-btn" aria-label="할 일 추가">
+              추가
+            </button>
+          </form>
+        </section>
+
+        <!-- Filter Bar -->
+        <section class="filter-container">
+          <button class="filter-btn active" data-filter="all">전체</button>
+          <button class="filter-btn" data-filter="work">💼 Work</button>
+          <button class="filter-btn" data-filter="life">🏠 Life</button>
+          <button class="filter-btn" data-filter="study">📚 Study</button>
+          <button class="filter-btn" data-filter="health">💪 Health</button>
+        </section>
+
+        <!-- Todo List -->
+        <section>
+          <ul id="todoList" class="todo-list">
+            <!-- Dynamically populated from JS -->
+          </ul>
+          
+          <!-- Empty State (Shown when no todos exist) -->
+          <div id="emptyState" class="empty-state">
+            <span class="empty-icon">☕</span>
+            <p>오늘 등록된 할 일이 없습니다.</p>
+            <p style="font-size: 0.85rem; opacity: 0.7;">할 일을 추가하고 완주해 보세요!</p>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Loading Spinner overlay -->
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+      </div>
 
     </main>
   </div>
 
-  <script src="app.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>

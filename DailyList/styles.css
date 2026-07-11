@@ -111,6 +111,7 @@ body::before {
   transition: all 0.15s cubic-bezier(0.25, 1, 0.5, 1);
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -416,7 +417,7 @@ body::before {
   content: "";
   width: 5px;
   height: 10px;
-  border: solid #000000; /* High contrast black checkmark on neon green background */
+  border: solid #000000;
   border-width: 0 3px 3px 0;
   transform: rotate(45deg) translate(-1px, -1px);
   display: none;
@@ -440,7 +441,6 @@ body::before {
   text-decoration-thickness: 3px;
   text-decoration-color: var(--border-color);
 }
-
 
 /* Category Badge inside Item */
 .item-badge {
@@ -593,10 +593,178 @@ body::before {
   fill: var(--text-color);
 }
 
+/* ==========================================
+   🔑 ADDED AUTHENTICATION & LOGIN UI STYLES
+   ========================================== */
+.auth-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.auth-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
+}
+
+.form-label {
+  font-weight: 800;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: var(--text-color);
+  letter-spacing: 0.5px;
+}
+
+.auth-switch-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 0.5rem;
+  color: var(--text-color);
+}
+
+.auth-switch-text button {
+  background: transparent;
+  border: none;
+  font-weight: 900;
+  text-decoration: underline;
+  cursor: pointer;
+  color: var(--primary-accent);
+  font-size: 0.85rem;
+  padding: 0 4px;
+}
+
+.auth-switch-text button:hover {
+  opacity: 0.8;
+}
+
+.auth-form.hidden-form {
+  display: none !important;
+}
+
+.auth-section.hidden-section {
+  display: none !important;
+}
+
+.todo-section.hidden-section {
+  display: none !important;
+}
+
+.todo-date-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 900;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  box-shadow: 1px 1px 0px 0px var(--border-color);
+  opacity: 0.8;
+  color: var(--text-color);
+}
+
+/* Header Info layout */
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.date-badge {
+  border: 2px solid var(--border-color);
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.8rem;
+  background-color: var(--card-bg);
+  box-shadow: 2px 2px 0px var(--border-color);
+  color: var(--text-color);
+}
+
+/* Loading Spinner styles */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(2px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .loading-overlay {
+  background: rgba(18, 18, 20, 0.85);
+}
+
+.loading-overlay.active {
+  display: flex;
+}
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid var(--border-color);
+  border-top-color: var(--color-purple);
+  border-radius: 50%;
+  animation: spin 0.8s infinite linear;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* User Badge Floating Design */
+.badge-user {
+  background-color: var(--color-cyan);
+  top: 30%;
+  right: -100px;
+  transform: rotate(-5deg);
+  animation: float-badge-user 7s infinite ease-in-out;
+}
+
+@keyframes float-badge-user {
+  0%, 100% {
+    transform: translateY(0) rotate(-5deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(-3deg);
+  }
+}
+
+.floating-badge.hidden-badge {
+  display: none !important;
+}
+
 /* Responsiveness adjustments */
 @media (max-width: 768px) {
   .floating-badge {
-    display: none; /* Hide floating badges on mobile */
+    display: none !important; /* Hide floating badges on mobile */
   }
   body {
     padding: 3rem 1rem 1rem 1rem;
@@ -607,4 +775,55 @@ body::before {
   .app-title {
     font-size: 2rem;
   }
+}
+
+/* Password Field Wrapper & Toggle Icon Button */
+.password-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  width: 100%;
+  padding: 0 1.25rem !important;
+  border: var(--border-width) solid var(--border-color) !important;
+  border-radius: 8px !important;
+  background-color: var(--card-bg) !important;
+  box-shadow: 4px 4px 0px 0px var(--border-color) !important;
+  transition: all 0.15s ease !important;
+}
+
+.password-wrapper:focus-within {
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 5px 5px 0px 0px var(--border-color) !important;
+}
+
+.password-wrapper .todo-input {
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0.85rem 0 !important;
+  background: transparent !important;
+  flex: 1;
+  width: 100%;
+}
+
+.password-toggle-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  transition: transform 0.1s ease;
+}
+
+.password-toggle-btn:hover {
+  transform: scale(1.1);
+}
+
+.password-toggle-btn:active {
+  transform: scale(0.9);
+}
+
+.password-toggle-btn svg {
+  stroke: var(--text-color);
 }
