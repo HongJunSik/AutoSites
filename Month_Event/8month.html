@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>더웰니스 8월 HOT SUMMER 이벤트 [상담/응대용] | THE WELLNESS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    
+    <style>
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            background-color: #f8fafc; 
+            color: #1e293b;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 850px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 380px;
+        }
+
+        .filter-btn {
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .filter-btn.active {
+            background-color: #0284c7; 
+            color: white;
+            border-color: #0284c7;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+        }
+
+        .card-enter {
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        /* Toast notification */
+        #toast {
+            transition: opacity 0.3s, transform 0.3s;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen pb-20 selection:bg-sky-500 selection:text-white">
+
+    <!-- Toast Notification for Copy Action -->
+    <div id="toast" class="fixed top-6 right-6 z-[10000] bg-slate-900 text-white text-xs md:text-sm font-bold px-4 py-3 rounded-2xl shadow-2xl border border-slate-700 opacity-0 pointer-events-none transform -translate-y-2 flex items-center gap-2">
+        <span class="text-emerald-400 text-base">✓</span>
+        <span id="toast-message">상담 문구가 클립보드에 복사되었습니다.</span>
+    </div>
+
+    <!-- Floating Original Poster View Widget -->
+    <div class="fixed top-4 left-4 z-50 hidden lg:block" id="poster-floating-widget">
+        <div class="bg-white/95 backdrop-blur-md p-2 rounded-2xl shadow-md border border-slate-200 hover:border-sky-500 hover:shadow-lg transition-all duration-200 cursor-pointer group" onclick="openPosterModal()">
+            <div class="relative overflow-hidden rounded-xl">
+                <img src="8event.png" alt="8월 이벤트 원본 포스터" class="w-24 h-32 object-cover object-top border border-slate-100 group-hover:scale-105 transition-transform duration-300">
+                <div class="absolute inset-0 bg-slate-900/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="text-white text-[11px] font-black bg-sky-600 px-2 py-0.5 rounded-full">포스터 확대</span>
+                </div>
+            </div>
+            <span class="text-[11px] font-bold text-sky-700 text-center block mt-1.5">&#128269; 8월 원본 포스터</span>
+        </div>
+    </div>
+
+    <!-- Mobile Top Poster Link Button -->
+    <div class="absolute top-4 left-4 z-40 block lg:hidden">
+        <button onclick="openPosterModal()" class="bg-white/90 backdrop-blur text-sky-700 border border-sky-200 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm hover:bg-white active:scale-95 transition-all flex items-center gap-1">
+            <span>&#128269;</span>
+            <span>8월 원본 포스터</span>
+        </button>
+    </div>
+
+    <!-- Image Lightbox Modal Pop-up -->
+    <div id="poster-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[9999] items-center justify-center p-4" style="display: none;" onclick="closePosterModal()">
+        <div class="relative max-w-4xl max-h-[92vh] overflow-y-auto rounded-2xl border border-white/20 bg-slate-900 shadow-2xl custom-scroll" onclick="event.stopPropagation()">
+            <button class="sticky top-4 right-4 ml-auto mr-4 mt-4 bg-slate-800 hover:bg-slate-700 text-white w-9 h-9 rounded-full flex items-center justify-center border border-white/20 shadow-lg transition-all z-10 font-bold" onclick="closePosterModal()">
+                ✕
+            </button>
+            <div class="p-2 sm:p-4">
+                <img src="8event.png" alt="더웰니스 8월 HOT SUMMER 이벤트 포스터 원본" class="w-full h-auto rounded-xl">
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-b from-sky-300 via-sky-100 to-sky-50 pt-14 pb-16 px-4 text-center border-b border-sky-200 relative overflow-hidden">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <div class="inline-flex items-center gap-1.5 bg-rose-500 text-white text-xs font-black px-3.5 py-1 rounded-full shadow-sm mb-3 tracking-wide">
+                <span>🔥</span>
+                <span>더웰니스 8월 상담 및 응대용 퀵 레퍼런스</span>
+            </div>
+            <h1 class="text-3xl sm:text-5xl md:text-6xl font-black text-slate-900 mb-3 tracking-tight">
+                <span class="text-rose-500">HOT</span> SUMMER! 8월 이벤트
+            </h1>
+            <p class="text-slate-600 text-sm md:text-lg font-bold mb-4">
+                무더운 여름, 더웰니스와 함께하는 화끈한 할인♥
+            </p>
+            <div class="inline-flex flex-wrap items-center justify-center gap-2 bg-white px-5 py-2 rounded-full shadow-sm text-xs md:text-sm font-bold text-slate-700 border border-slate-200">
+                <span class="text-sky-600 font-extrabold">🗓 기간</span> : ~ 26. 08. 31(월) 까지 
+                <span class="text-slate-300">|</span> 
+                <span class="text-rose-600 font-bold">※ 전 항목 VAT 10% 별도</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Top Special Highlights Grid (◆SPECIAL◆ 스페셜 특가 4대 라인업) -->
+    <div class="max-w-6xl mx-auto px-4 -mt-8 relative z-20">
+        <div class="bg-gradient-to-r from-pink-600 via-rose-600 to-pink-500 rounded-3xl p-5 shadow-xl text-white border-2 border-pink-400">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="bg-white text-rose-600 text-xs font-black px-3 py-0.5 rounded-full uppercase tracking-wider">
+                        ◆ SPECIAL ◆
+                    </span>
+                    <h2 class="text-lg md:text-xl font-black tracking-tight">8월 스페셜 특가 4대 기획전</h2>
+                </div>
+                <span class="text-[11px] text-pink-100 font-semibold">카드를 클릭하면 해당 시술로 즉시 이동합니다</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                <!-- Special 1 -->
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all flex flex-col justify-between cursor-pointer" onclick="searchKeyword('눈밑')">
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="bg-rose-950/70 text-yellow-300 text-[11px] font-black px-2 py-0.5 rounded-full">비수술 눈밑지</span>
+                            <span class="text-[11px] text-rose-200">특집</span>
+                        </div>
+                        <h3 class="font-bold text-sm md:text-base mb-1 leading-snug">펠루티 / 리즈타임+플라즈마</h3>
+                        <p class="text-[11px] text-rose-100 leading-relaxed mb-2">눈밑 처짐, 꺼짐, 다크서클 비수술 집중 개선</p>
+                    </div>
+                    <div class="pt-2 border-t border-white/15 flex items-baseline justify-between">
+                        <span class="text-xs text-pink-200">각 1회/케어</span>
+                        <span class="text-xl font-black text-yellow-300">50<span class="text-xs font-semibold text-white ml-0.5">만원</span></span>
+                    </div>
+                </div>
+
+                <!-- Special 2 -->
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all flex flex-col justify-between cursor-pointer" onclick="searchKeyword('울트라클리어')">
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="bg-rose-950/70 text-yellow-300 text-[11px] font-black px-2 py-0.5 rounded-full">흉터 종결자</span>
+                            <span class="text-[11px] text-rose-200">시중 90만 ➔</span>
+                        </div>
+                        <h3 class="font-bold text-sm md:text-base mb-1 leading-snug">울트라클리어 1회</h3>
+                        <p class="text-[11px] text-rose-100 leading-relaxed mb-2">수술·성형·여드름 흉터 치료 (3cm 기준)</p>
+                    </div>
+                    <div class="pt-2 border-t border-white/15 flex items-baseline justify-between">
+                        <span class="text-xs text-pink-200">파격 특가</span>
+                        <span class="text-xl font-black text-yellow-300">30<span class="text-xs font-semibold text-white ml-0.5">만원~</span></span>
+                    </div>
+                </div>
+
+                <!-- Special 3 -->
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all flex flex-col justify-between cursor-pointer" onclick="searchKeyword('세포복원주사')">
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="bg-rose-950/70 text-yellow-300 text-[11px] font-black px-2 py-0.5 rounded-full">단독 개발</span>
+                            <span class="text-[11px] text-rose-200">8월 한정</span>
+                        </div>
+                        <h3 class="font-bold text-sm md:text-base mb-1 leading-snug">흉터 세포복원주사 30cc</h3>
+                        <p class="text-[11px] text-rose-100 leading-relaxed mb-2">대용량 세포복원주사 + 줄기세포 미스트 증정</p>
+                    </div>
+                    <div class="pt-2 border-t border-white/15 flex items-baseline justify-between">
+                        <span class="text-xs text-pink-200">세포재생 패키지</span>
+                        <span class="text-xl font-black text-yellow-300">69<span class="text-xs font-semibold text-white ml-0.5">만원</span></span>
+                    </div>
+                </div>
+
+                <!-- Special 4 -->
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 hover:bg-white/20 transition-all flex flex-col justify-between cursor-pointer" onclick="searchKeyword('덴서티')">
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="bg-rose-950/70 text-yellow-300 text-[11px] font-black px-2 py-0.5 rounded-full">전국 최저가</span>
+                            <span class="text-[11px] text-rose-200">이영애 Pick</span>
+                        </div>
+                        <h3 class="font-bold text-sm md:text-base mb-1 leading-snug">덴서티 600샷 (알파팁)</h3>
+                        <p class="text-[11px] text-rose-100 leading-relaxed mb-2">통증 없이 강력한 고주파 탄력 리프팅</p>
+                    </div>
+                    <div class="pt-2 border-t border-white/15 flex items-baseline justify-between">
+                        <span class="text-xs text-pink-200">정품 600샷</span>
+                        <span class="text-xl font-black text-yellow-300">149<span class="text-xs font-semibold text-white ml-0.5">만원</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="max-w-6xl mx-auto px-4 mt-10">
+        
+        <!-- Fast Search and Category Filter Section -->
+        <section class="mb-10">
+            <!-- Search Bar -->
+            <div class="max-w-3xl mx-auto mb-6">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="시술명 또는 고민 부위 빠른 검색 (예: 눈밑, 흉터, 여드름, 울써마지, 스컬트라, 보톡스, 리팟...)" 
+                        class="w-full pl-12 pr-12 py-3.5 bg-white rounded-2xl border-2 border-sky-300 shadow-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm md:text-base transition-all font-medium"
+                        autofocus
+                    >
+                    <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
+                        🔍
+                    </div>
+                    <button 
+                        id="clear-search-btn" 
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm font-bold hidden px-1.5 py-0.5 bg-slate-100 rounded-md"
+                        onclick="clearSearch()"
+                        title="검색어 지우기 (ESC)"
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                <!-- Fast Keyword Filter Chips -->
+                <div class="flex flex-wrap items-center justify-center gap-1.5 mt-3 text-xs">
+                    <span class="font-bold text-slate-400 mr-1">빠른 검색:</span>
+                    <button onclick="searchKeyword('눈밑')" class="px-2.5 py-1 bg-white hover:bg-sky-100 text-slate-700 hover:text-sky-700 rounded-lg border border-slate-200 transition-colors font-medium">#비수술눈밑지</button>
+                    <button onclick="searchKeyword('울트라클리어')" class="px-2.5 py-1 bg-white hover:bg-sky-100 text-slate-700 hover:text-sky-700 rounded-lg border border-slate-200 transition-colors font-medium">#울트라클리어</button>
+                    <button onclick="searchKeyword('덴서티')" class="px-2.5 py-1 bg-white hover:bg-sky-100 text-slate-700 hover:text-sky-700 rounded-lg border border-slate-200 transition-colors font-medium">#덴서티</button>
+                    <button onclick="searchKeyword('울써마지')" class="px-2.5 py-1 bg-white hover:bg-sky-100 text-slate-700 hover:text-sky-700 rounded-lg border border-slate-200 transition-colors font-medium">#FULL울써마지</button>
+                    <button onclick="searchKeyword('스컬트라')" class="px-2.5 py-1 bg-white hover:bg-sky-100 text-slate-700 hover:text-sky-700 rounded-lg border border-slate-200 transition-colors font-medium">#스컬트라40만</button>
+                    <button onclick="searchKeyword('여드름')" class="px-2.5 py-1 bg-white hover:bg-sky-100 text-slate-700 hover:text-sky-700 rounded-lg border border-slate-200 transition-colors font-medium">#여드름4주</button>
+                    <button onclick="searchKeyword('리팟')" class="px-2.5 py-1 bg-white hover:bg-sky-100 text-slate-700 hover:text-sky-700 rounded-lg border border-slate-200 transition-colors font-medium">#Ice리팟</button>
+                    <button onclick="searchKeyword('바디피팅')" class="px-2.5 py-1 bg-white hover:bg-sky-100 text-slate-700 hover:text-sky-700 rounded-lg border border-slate-200 transition-colors font-medium">#바디피팅</button>
+                    <button onclick="searchKeyword('쥬브젠')" class="px-2.5 py-1 bg-white hover:bg-sky-100 text-slate-700 hover:text-sky-700 rounded-lg border border-slate-200 transition-colors font-medium">#쥬브젠</button>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="flex flex-wrap justify-center gap-1.5 md:gap-2 mb-6" id="filter-container">
+                <button data-filter="all" class="filter-btn active px-4 py-2 rounded-full border border-slate-300 bg-white text-slate-700 text-xs md:text-sm font-bold hover:bg-slate-50">🌟 전체보기</button>
+                <button data-filter="special" class="filter-btn px-4 py-2 rounded-full border border-slate-300 bg-white text-slate-700 text-xs md:text-sm font-bold hover:bg-slate-50">👑 스페셜 특가</button>
+                <button data-filter="lifting" class="filter-btn px-4 py-2 rounded-full border border-slate-300 bg-white text-slate-700 text-xs md:text-sm font-bold hover:bg-slate-50">💆‍♀️ 8월 Big세일/리프팅</button>
+                <button data-filter="booster" class="filter-btn px-4 py-2 rounded-full border border-slate-300 bg-white text-slate-700 text-xs md:text-sm font-bold hover:bg-slate-50">💧 여름 스킨부스터</button>
+                <button data-filter="body" class="filter-btn px-4 py-2 rounded-full border border-slate-300 bg-white text-slate-700 text-xs md:text-sm font-bold hover:bg-slate-50">👙 썸머 Hot바디</button>
+                <button data-filter="skin" class="filter-btn px-4 py-2 rounded-full border border-slate-300 bg-white text-slate-700 text-xs md:text-sm font-bold hover:bg-slate-50">✨ 모공/여드름/미백</button>
+                <button data-filter="regenerative" class="filter-btn px-4 py-2 rounded-full border border-slate-300 bg-white text-slate-700 text-xs md:text-sm font-bold hover:bg-slate-50">🧬 줄기세포 & 특화재생</button>
+                <button data-filter="hotdeal" class="filter-btn px-4 py-2 rounded-full border border-slate-300 bg-white text-slate-700 text-xs md:text-sm font-bold hover:bg-slate-50">🔥 가성비 핫딜</button>
+            </div>
+
+            <!-- Counter & Quick Info -->
+            <div class="flex items-center justify-between text-xs text-slate-500 mb-4 px-1">
+                <div>
+                    검색 결과: <strong id="item-count" class="text-sky-600 text-sm font-black">0</strong>개 항목
+                </div>
+                <div class="text-[11px] text-slate-400 hidden sm:block">
+                    💡 카드 우측 상단의 <strong class="text-slate-600">📋 상담문구 복사</strong> 버튼을 누르면 문자/카톡용 텍스트가 복사됩니다.
+                </div>
+            </div>
+
+            <!-- Dynamic Card Grid -->
+            <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Populated dynamically by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Chart.js Price Comparison Visualization Section -->
+        <section class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 mb-12">
+            <div class="mb-6 text-center">
+                <span class="inline-block bg-sky-100 text-sky-800 text-xs font-bold px-3 py-1 rounded-full mb-1.5">8월 PRICE SUMMARY</span>
+                <h2 class="text-xl md:text-2xl font-bold text-slate-800 mb-1">💧 8월 스킨부스터 & 핵심 시술 단가 비교표</h2>
+                <p class="text-slate-500 text-xs md:text-sm max-w-xl mx-auto">
+                    고객 문의 시 부스터 종류별 8월 정식 혜택가를 즉시 비교 안내할 수 있습니다. (VAT 별도)
+                </p>
+            </div>
+            
+            <div class="w-full flex justify-center">
+                <div class="chart-container">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Simple Modern Footer -->
+    <footer class="border-t border-slate-200 mt-16 py-8 bg-slate-50 text-slate-500 text-center text-xs">
+        <div class="max-w-6xl mx-auto px-4">
+            <h4 class="font-extrabold text-slate-800 text-sm mb-1">더웰니스의원 (THE WELLNESS)</h4>
+            <p class="text-slate-600 mb-1">서울 서초구 신반포로 219 8동 2층 (반포역 4번 출구 도보 249m)</p>
+            <p class="text-slate-600 mb-2">대표전화: <strong>02-597-5977</strong> <span class="mx-1">|</span> 주차: 건물 뒤 옥외주차장 완비 (주차권 지원)</p>
+            <p class="text-slate-400 mt-2">&copy; 2026 더웰니스의원. All Rights Reserved. ※ 전 시술 VAT 10% 별도 적용</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        // 8event.png 포스터 100% 반영 데이터셋
+        const eventData = [
+            // ==========================================
+            // [1] 스페셜 특가 이벤트 (SPECIAL 4대 라인업)
+            // ==========================================
+            { 
+                id: 1, 
+                categories: ["special", "lifting"], 
+                tag: "스페셜 특가", 
+                badgeColor: "bg-rose-500 text-white",
+                title: "비수술 눈밑지: 펠루티 눈밑리프팅 1회", 
+                desc: "늘출힘, 칙칙한 눈밑을 매끈하게! 절개나 수술 없이 완성하는 눈밑 탄력 리프팅", 
+                price: "50", 
+                unit: "만원", 
+                extra: "비수술 눈밑지 특집",
+                keywords: "눈밑 펠루티 눈밑리프팅 눈밑지방 비수술 다크서클 리프팅 50만"
+            },
+            { 
+                id: 2, 
+                categories: ["special", "booster"], 
+                tag: "스페셜 특가", 
+                badgeColor: "bg-rose-500 text-white",
+                title: "무제한 콜라겐 리즈타임주사 + 플라즈마 케어", 
+                desc: "눈밑 꺼짐, 눈밑 주름, 고질적인 다크서클 개선을 위한 더웰니스 시그니처 무제한 콜라겐 재생 케어", 
+                price: "50", 
+                unit: "만원", 
+                extra: "눈밑 꺼짐·다크서클 개선",
+                keywords: "리즈타임 플라즈마 눈밑 눈밑주름 다크서클 콜라겐 무제한 50만"
+            },
+            { 
+                id: 3, 
+                categories: ["special", "skin"], 
+                tag: "파격 특가", 
+                badgeColor: "bg-rose-500 text-white",
+                title: "울트라클리어 1회", 
+                desc: "시중 시술가 90만원~ 대비 더웰니스 30만원! 수술 흉터, 성형 흉터, 여드름 흉터 치료 (비용 부담은 낮추고 흉터 개선 효과는 UP)", 
+                price: "30", 
+                unit: "만원~", 
+                extra: "3cm 기준 (시중 90만 대비)",
+                keywords: "울트라클리어 흉터 수술흉터 성형흉터 여드름흉터 흉터레이저 30만"
+            },
+            { 
+                id: 4, 
+                categories: ["special", "regenerative", "skin"], 
+                tag: "단독 개발 특화", 
+                badgeColor: "bg-purple-600 text-white",
+                title: "대용량 세포복원주사 30cc + 줄기세포 미스트", 
+                desc: "더웰니스 세포재생기술 단독 개발! 깊게 패인 흉터와 손상된 피부 세포를 복원하는 8월 한정 스페셜 구성", 
+                price: "69", 
+                unit: "만원", 
+                extra: "8월 한정 미스트 증정",
+                keywords: "세포복원주사 흉터 대용량 줄기세포 미스트 세포재생 69만"
+            },
+            { 
+                id: 5, 
+                categories: ["special", "lifting"], 
+                tag: "전국 최저가", 
+                badgeColor: "bg-amber-500 text-white",
+                title: "덴서티 600샷 (알파팁)", 
+                desc: "이영애가 선택한 프리미엄 리프팅! 아프지 않은 써마지 효과, 진피층 콜라겐 강력 타이트닝", 
+                price: "149", 
+                unit: "만원", 
+                extra: "이영애 Pick 리프팅",
+                keywords: "덴서티 덴서티600 알파팁 리프팅 써마지 고주파 이영애 149만"
+            },
+
+            // ==========================================
+            // [2] 썸머 Hot바디 특집
+            // ==========================================
+            { 
+                id: 6, 
+                categories: ["body", "hotdeal"], 
+                tag: "바디 기획", 
+                badgeColor: "bg-sky-500 text-white",
+                title: "승모근 or 종아리 or 다한증 보톡스", 
+                desc: "본격적인 여름 대비! 오프숄더 핏을 위한 승모근, 슬림한 종아리 라인, 땀 분비 억제 다한증 보톡스 (택 1)", 
+                price: "9.9", 
+                unit: "만원", 
+                extra: "100유닛 기준",
+                keywords: "승모근 종아리 다한증 보톡스 바디 100유닛 바디보톡스 9.9만"
+            },
+            { 
+                id: 7, 
+                categories: ["body"], 
+                tag: "지방세포 소멸", 
+                badgeColor: "bg-emerald-600 text-white",
+                title: "바디피팅 60kj (+20kj 보너스)", 
+                desc: "누워만 있으면 지방세포 파괴 완료! 바디피팅 60kj 진행 시 20kj 추가 보너스 증정 (총 80kj 혜택)", 
+                price: "49", 
+                unit: "만원", 
+                extra: "총 60kj + 20kj(덤)",
+                keywords: "바디피팅 지방세포 지방파괴 다이어트 바디라인 슬림바디 49만"
+            },
+            { 
+                id: 8, 
+                categories: ["body"], 
+                tag: "바디 시너지", 
+                badgeColor: "bg-emerald-600 text-white",
+                title: "바디피팅 60kj+20kj + 바디 웰핏 지방분해주사", 
+                desc: "지방 사멸 바디피팅 시술(총 80kj)에 더해 강력한 웰핏 바디 지방분해주사를 결합한 듀얼 슬리밍 패키지", 
+                price: "69", 
+                unit: "만원", 
+                extra: "80kj + 지방분해주사",
+                keywords: "바디피팅 웰핏주사 지방분해주사 바디웰핏 지방분해 69만"
+            },
+            { 
+                id: 9, 
+                categories: ["body", "lifting"], 
+                tag: "1+1 세일", 
+                badgeColor: "bg-rose-500 text-white",
+                title: "얼굴소멸 웰핏 지방분해주사 1+1", 
+                desc: "이중턱, 턱라인, 심부볼, 광대, 팔자 부위의 불필요한 얼굴 지방 정밀 분해 (지정 부위 중 택 1)", 
+                price: "29", 
+                unit: "만원", 
+                extra: "얼굴라인 1+1",
+                keywords: "얼굴소멸 웰핏주사 윤곽주사 이중턱 턱라인 심부볼 광대 팔자 1+1 29만"
+            },
+            { 
+                id: 10, 
+                categories: ["body"], 
+                tag: "대용량 바디", 
+                badgeColor: "bg-sky-600 text-white",
+                title: "대용량 바디 매끈주사", 
+                desc: "팔뚝, 부유방, 복부, 러브핸들, 허벅지, 종아리 부위 군살 집중 지방분해 & 바디라인 정돈 (선택 부위 택 1)", 
+                price: "39", 
+                unit: "만원", 
+                extra: "바디 군살 집중",
+                keywords: "대용량 바디매끈주사 팔뚝 부유방 복부 러브핸들 허벅지 종아리 지방분해 39만"
+            },
+
+            // ==========================================
+            // [3] 더웰니스 8월 Big 세일 / 리프팅
+            // ==========================================
+            { 
+                id: 11, 
+                categories: ["lifting"], 
+                tag: "BEST 추천 👍", 
+                badgeColor: "bg-rose-600 text-white",
+                title: "FULL 울써마지 (울쎄라300 + 써마지600)", 
+                desc: "울쎄라 프라임 300샷 + 써마지 FLX 600샷 + 무통수액 + LDM리프팅 마취 + 얼굴전체 스킨보톡스(제오민) 프리미엄 종합 풀패키지", 
+                price: "280", 
+                unit: "만원", 
+                extra: "제오민 풀페이스 포함",
+                keywords: "울써마지 울쎄라 써마지 FLX 제오민 스킨보톡스 LDM 리프팅 280만"
+            },
+            { 
+                id: 12, 
+                categories: ["lifting", "hotdeal"], 
+                tag: "Big 세일", 
+                badgeColor: "bg-sky-600 text-white",
+                title: "스킨보톡스 (풀페이스)", 
+                desc: "얼굴 전체 피부 표층에 촘촘하게 주사하여 미세 잔주름 개선, 모공 타이트닝 및 물광 톤업 유도", 
+                price: "9", 
+                unit: "만원", 
+                extra: "얼굴 전체 풀페이스",
+                keywords: "스킨보톡스 더모톡신 풀페이스 모공주름 물광 9만"
+            },
+            { 
+                id: 13, 
+                categories: ["lifting"], 
+                tag: "Big 세일", 
+                badgeColor: "bg-sky-600 text-white",
+                title: "울쎄라2 프라임 300샷", 
+                desc: "피부 속 근막(SMAS)층을 초음파로 정밀 타이트닝하여 처진 턱선과 심부볼을 강력하게 리프팅하는 정품 시술", 
+                price: "99", 
+                unit: "만원", 
+                extra: "정품 울쎄라 300샷",
+                keywords: "울쎄라 울쎄라프라임 300샷 SMAS 근막 초음파 리프팅 99만"
+            },
+            { 
+                id: 14, 
+                categories: ["lifting"], 
+                tag: "Big 세일", 
+                badgeColor: "bg-sky-600 text-white",
+                title: "아이써마지 225샷", 
+                desc: "눈가 전용 특수 아이팁을 사용하여 민감한 눈꺼풀 처짐 및 눈가 미세 잔주름을 집중 탄력 개선", 
+                price: "99", 
+                unit: "만원", 
+                extra: "눈가 전용 아이팁",
+                keywords: "아이써마지 눈가주름 눈꺼풀처짐 써마지 아이팁 225샷 99만"
+            },
+            { 
+                id: 15, 
+                categories: ["lifting"], 
+                tag: "Big 세일", 
+                badgeColor: "bg-sky-600 text-white",
+                title: "써마지 FLX 600샷", 
+                desc: "진피층에 고주파 열에너지를 고르게 전달하여 피부 속 콜라겐 재생을 유도하는 리프팅의 스탠다드", 
+                price: "199", 
+                unit: "만원", 
+                extra: "정품 FLX 600샷",
+                keywords: "써마지 써마지FLX FLX600 고주파 타이트닝 콜라겐 199만"
+            },
+
+            // ==========================================
+            // [4] 여름 피부를 채우는 더웰니스 스킨부스터
+            // ==========================================
+            { 
+                id: 16, 
+                categories: ["booster"], 
+                tag: "8월 추천 특가", 
+                badgeColor: "bg-rose-500 text-white",
+                title: "포텐자 & 고우리(GOURI) 특가", 
+                desc: "마이크로니들 고주파 포텐자 + 고우리(GOURI) 1시린지 액상 콜라겐 부스터 결합 시너지 특가", 
+                price: "59", 
+                unit: "만원", 
+                extra: "포텐자 + 고우리 1시린지",
+                keywords: "포텐자 고우리 GOURI 스킨부스터 콜라겐부스터 모공 탄력 59만"
+            },
+            { 
+                id: 17, 
+                categories: ["booster"], 
+                tag: "8월의 추천", 
+                badgeColor: "bg-sky-600 text-white",
+                title: "리쥬란 2cc", 
+                desc: "연어 DNA에서 추출한 PN 성분으로 손상된 여름 피부 장벽을 재생하고 유수분 밸런스 회복", 
+                price: "20", 
+                unit: "만원", 
+                extra: "오리지널 리쥬란 2cc",
+                keywords: "리쥬란 리쥬란힐러 2cc 피부재생 장벽강화 연어주사 20만"
+            },
+            { 
+                id: 18, 
+                categories: ["booster"], 
+                tag: "8월의 추천", 
+                badgeColor: "bg-sky-600 text-white",
+                title: "리투오 (Lituo) 6cc", 
+                desc: "넉넉한 6cc 대용량 고농도 수분 탄력 스킨부스터로 얼굴 전체에 빈틈없는 수분광 형성", 
+                price: "59", 
+                unit: "만원", 
+                extra: "6cc 대용량",
+                keywords: "리투오 Lituo 6cc 대용량 수분 탄력 물광 59만"
+            },
+            { 
+                id: 19, 
+                categories: ["booster"], 
+                tag: "눈가 전용", 
+                badgeColor: "bg-indigo-600 text-white",
+                title: "아이리쥬란 1cc", 
+                desc: "얇고 민감한 눈가 전용 맞춤 점도의 리쥬란 힐러로 눈가 잔주름 및 칙칙함 완화", 
+                price: "19", 
+                unit: "만원", 
+                extra: "눈가 전용 포뮬러",
+                keywords: "아이리쥬란 눈가리쥬란 눈밑잔주름 1cc 19만"
+            },
+            { 
+                id: 20, 
+                categories: ["booster"], 
+                tag: "순수 콜라겐", 
+                badgeColor: "bg-pink-600 text-white",
+                title: "순수 99.9% 콜라겐 레티젠", 
+                desc: "피부 진피층에 부족한 콜라겐을 직접 즉각 주입하여 탱탱하고 쫀쫀한 피부 밀도 형성", 
+                price: "29", 
+                unit: "만원", 
+                extra: "레티젠 정품",
+                keywords: "레티젠 순수콜라겐 99.9% 콜라겐주사 탄력 29만"
+            },
+            { 
+                id: 21, 
+                categories: ["booster"], 
+                tag: "스킨부스터", 
+                badgeColor: "bg-sky-600 text-white",
+                title: "리바이브 (Revive) 1cc", 
+                desc: "히알루론산과 글리세롤 복합 성분으로 피부 깊숙이 수분감과 미세 주름을 부드럽게 개선", 
+                price: "45", 
+                unit: "만원", 
+                extra: "리바이브 정품",
+                keywords: "리바이브 Revive 벨로테로 수분주사 미세주름 45만"
+            },
+            { 
+                id: 22, 
+                categories: ["booster"], 
+                tag: "무통 풀패키지", 
+                badgeColor: "bg-teal-600 text-white",
+                title: "무통 리쥬란 힐러 4cc + 시너지부스터 2cc + LDM", 
+                desc: "통증을 대폭 줄인 리쥬란 4cc에 시너지부스터 2cc와 LDM 물방울 재생 마취를 결합한 프리미엄 스페셜 케어", 
+                price: "65", 
+                unit: "만원", 
+                extra: "총 6cc + LDM 재생",
+                keywords: "무통리쥬란 리쥬란4cc 시너지부스터 LDM 물방울초음파 무통 65만"
+            },
+            { 
+                id: 23, 
+                categories: ["booster"], 
+                tag: "BEST 인기🔥", 
+                badgeColor: "bg-rose-600 text-white",
+                title: "스컬트라 (Sculptra) 1병", 
+                desc: "피부 스스로 콜라겐을 생성하도록 유도하여 자연스러운 볼륨과 탄력을 장기간 지속시키는 자가 볼륨 주사", 
+                price: "40", 
+                unit: "만원", 
+                extra: "8월 인기 특가 (40만)",
+                keywords: "스컬트라 Sculptra 1병 콜라겐주사 볼륨 탄력 자가콜라겐 40만"
+            },
+
+            // ==========================================
+            // [5] 모공 / 여드름 / 미백 라인
+            // ==========================================
+            { 
+                id: 24, 
+                categories: ["skin"], 
+                tag: "모공 올인원", 
+                badgeColor: "bg-cyan-600 text-white",
+                title: "모공쫀쫀 올인원", 
+                desc: "늘어난 모공들을 강력하게 조이고 탄탄하게! 포텐자(펌핑팁) + 쥬베룩볼륨 3cc 융합", 
+                price: "40", 
+                unit: "만원", 
+                extra: "포텐자 펌핑팁 + 쥬베룩볼륨",
+                keywords: "모공 모공쫀쫀 포텐자 펌핑팁 쥬베룩볼륨 모공축소 탄력 40만"
+            },
+            { 
+                id: 25, 
+                categories: ["skin"], 
+                tag: "여름 트러블 집중", 
+                badgeColor: "bg-amber-600 text-white",
+                title: "여드름 올인원 4주 프로그램", 
+                desc: "여름철 과도한 피지와 트러블을 체계적으로 단계별 박멸하는 4주 논스톱 집중 치료", 
+                price: "99", 
+                unit: "만원", 
+                extra: "4주 논스톱 관리",
+                steps: [
+                    "1주차: GA + 골드에토좀PDT + 제네시스토닝 + 압출 + 키오딘 + LDM",
+                    "2주차: GA + 네오빔 + 꿀광부스터 + 압출 + 키오딘 + LDM",
+                    "3주차: GA + 라라샷 + 네오빔 + 압출 + 키오딘 + LDM",
+                    "4주차: GA + 라라샷 + 네오빔 + 압출 + 키오딘 + LDM"
+                ],
+                keywords: "여드름 4주 여드름올인원 PDT 네오빔 라라샷 압출 스케일링 트러블 99만"
+            },
+            { 
+                id: 26, 
+                categories: ["skin", "hotdeal"], 
+                tag: "원데이 집중", 
+                badgeColor: "bg-emerald-600 text-white",
+                title: "여드름 원데이 클리어", 
+                desc: "GA 스케일링 + 골드에토좀PDT + 정밀 압출 + 크라이오 진정 + 키오딘 도포 + LDM 물방울 초음파 케어", 
+                price: "19", 
+                unit: "만원", 
+                extra: "원데이 6단계 풀케어",
+                keywords: "여드름 여드름원데이 클리어 PDT 압출 크라이오 LDM 19만"
+            },
+            { 
+                id: 27, 
+                categories: ["skin", "hotdeal"], 
+                tag: "1회 체험가", 
+                badgeColor: "bg-rose-500 text-white",
+                title: "디올 산소토닝 풀케어 (1회 체험가)", 
+                desc: "맑고 투명한 피부톤과 고농도 산소 진정을 결합한 디올 산소토닝 1회 특별 체험 (정상가 30만원 ➔ 19만원)", 
+                price: "19", 
+                unit: "만원", 
+                extra: "정상가 30만 ➔ 19만",
+                keywords: "디올 산소토닝 산소테라피 토닝 미백 색소 체험가 19만"
+            },
+            { 
+                id: 28, 
+                categories: ["skin", "hotdeal"], 
+                tag: "풀페이스 올킬", 
+                badgeColor: "bg-purple-600 text-white",
+                title: "원데이 풀페이스 색소 올킬 패키지", 
+                desc: "얼굴 전체 색소·잡티 개선. 엑셀V + 어븀야그 레이저 (얼굴 전체 점, 편평사마귀, 쥐젖 제거 포함)", 
+                price: "45", 
+                unit: "만원", 
+                extra: "점·사마귀·쥐젖 포함",
+                keywords: "색소올킬 엑셀V 어븀야그 점제거 편평사마귀 쥐젖 기미 잡티 45만"
+            },
+            { 
+                id: 29, 
+                categories: ["skin", "hotdeal"], 
+                tag: "1+1 혜택", 
+                badgeColor: "bg-sky-500 text-white",
+                title: "모공매끈주사 1+1", 
+                desc: "나비존 등 거친 요철 모공 부위를 매끄럽게 가꿔주는 스킨보톡스 주사 1+1 특별 혜택", 
+                price: "15", 
+                unit: "만원", 
+                extra: "모공주사 1+1",
+                keywords: "모공매끈주사 모공주사 스킨보톡스 나비존 요철 1+1 15만"
+            },
+
+            // ==========================================
+            // [6] 줄기세포 & 특화재생 (리팟 / 쥬브젠 / 코어줄기세포)
+            // ==========================================
+            { 
+                id: 30, 
+                categories: ["regenerative"], 
+                tag: "더웰니스 자체 개발", 
+                badgeColor: "bg-indigo-600 text-white",
+                title: "3STEP 고순도 코어 줄기세포센터 (30cc)", 
+                desc: "고순도 자가 줄기세포를 추출·농축하여 피부 본연의 자생력을 근본적으로 회복시키는 프리미엄 센터 케어", 
+                price: "80", 
+                unit: "만원~", 
+                extra: "줄기세포 30cc 기준",
+                steps: [
+                    "STEP 01: 줄기세포 생착주사",
+                    "STEP 02: 고순도 줄기세포주사",
+                    "STEP 03: 고순도 줄기세포 재생케어"
+                ],
+                keywords: "줄기세포 코어줄기세포 생착주사 줄기세포주사 재생케어 줄기세포30cc 80만"
+            },
+            { 
+                id: 31, 
+                categories: ["regenerative", "skin"], 
+                tag: "평생 리팟보증제", 
+                badgeColor: "bg-sky-700 text-white",
+                title: "Ice 트리플 리팟 올인원", 
+                desc: "자외선 걱정 NO! 여름 전용 흑자·검버섯 파괴 프로그램 (누적 시술 대기록 돌파!)", 
+                price: "30", 
+                unit: "만원~", 
+                extra: "5mm 기준 / 보증제 적용",
+                steps: [
+                    "1단계: 흑자 제거 - 리팟레이저",
+                    "2단계: 흑자 재발 방지 - UV 리팟주사",
+                    "3단계: 진정재생 - 줄기세포 리팟 크라이오 냉동요법",
+                    "4단계: 필수리팟케어 - 홈케어 키트 3종 증정 (8만원 상당: 구슬 리팟 전용 젤클렌저 + CU크림 + 듀오덤)"
+                ],
+                keywords: "리팟 리팟올인원 흑자 검버섯 리팟레이저 UV리팟주사 크라이오 홈케어키트 30만"
+            },
+            { 
+                id: 32, 
+                categories: ["regenerative"], 
+                tag: "특허청 출원", 
+                badgeColor: "bg-amber-600 text-white",
+                title: "쥬브젠 3STEP 새살재생술", 
+                desc: "깊은 주름과 패임의 원인부터 다루는 더웰니스 단독 특허 기술! 깊은 유착을 풀고 자가 새살이 차오르도록 재생", 
+                price: "30% 할인", 
+                unit: "", 
+                extra: "리터치 1회 포함",
+                steps: [
+                    "STEP 01: 증상별 쥬브젠 진피재생술",
+                    "STEP 02: 진피 고주파·공기압 고주파 유착 박리술",
+                    "STEP 03: 피부 재생 줄기세포 쥬브젠 플라즈마"
+                ],
+                keywords: "쥬브젠 쥬브젠3STEP 새살재생술 깊은주름 유착박리 진피재생 리터치 30%"
+            },
+
+            // ==========================================
+            // [7] 가성비 핫딜 라인
+            // ==========================================
+            { 
+                id: 33, 
+                categories: ["hotdeal"], 
+                tag: "부담제로 핫딜", 
+                badgeColor: "bg-slate-700 text-white",
+                title: "국산 주름보톡스", 
+                desc: "이마 / 미간 / 눈가 / 콧등 부위 표정 주름 이완 및 예방 (지정 부위 중 택 1)", 
+                price: "2.5", 
+                unit: "만원", 
+                extra: "부위별 택 1",
+                keywords: "보톡스 주름보톡스 이마 미간 눈가 콧등 국산보톡스 핫딜 2.5만"
+            }
+        ];
+
+        // Global State
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        // Create Card HTML for Consultation Desk
+        function createCardHTML(item, index) {
+            const delay = (index % 9) * 0.03;
+            
+            // Price Display
+            let priceDisplay = `<span class="text-3xl font-black text-sky-600 tracking-tight">${item.price}</span>`;
+            if (item.unit) {
+                priceDisplay += `<span class="text-slate-500 font-bold ml-1 text-sm">${item.unit}</span>`;
+            }
+
+            // Steps HTML
+            let stepsHTML = '';
+            if (item.steps && item.steps.length > 0) {
+                stepsHTML = `
+                    <div class="mt-3 pt-2.5 border-t border-slate-100 bg-slate-50/80 p-2.5 rounded-xl">
+                        <span class="text-[11px] font-extrabold text-sky-700 block mb-1 flex items-center gap-1">
+                            <span>📋</span> 프로그램 진행 순서
+                        </span>
+                        <ul class="text-xs text-slate-600 space-y-1">
+                            ${item.steps.map(step => `
+                                <li class="flex items-start gap-1.5 leading-snug">
+                                    <span class="text-sky-500 font-bold mt-0.5">&#8226;</span>
+                                    <span>${step}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 hover:border-sky-300 hover:shadow-md transition-all relative overflow-hidden card-enter flex flex-col justify-between h-full" style="animation-delay: ${delay}s;">
+                    <!-- Badge & Copy Button Header -->
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="${item.badgeColor || 'bg-sky-100 text-sky-800'} text-[11px] font-black px-2.5 py-0.5 rounded-full shadow-sm">
+                            ${item.tag}
+                        </span>
+                        <button 
+                            onclick="copyConsultationText(${item.id})" 
+                            class="text-[11px] font-bold text-slate-500 hover:text-sky-600 bg-slate-100 hover:bg-sky-50 px-2 py-1 rounded-lg border border-slate-200 transition-colors flex items-center gap-1"
+                            title="고객 안내용 텍스트 복사"
+                        >
+                            <span>📋</span>
+                            <span>상담문구 복사</span>
+                        </button>
+                    </div>
+
+                    <!-- Body Content -->
+                    <div class="flex-grow">
+                        <h3 class="text-base md:text-lg font-black text-slate-800 mb-1.5 leading-snug">
+                            ${item.title}
+                        </h3>
+                        <p class="text-slate-500 text-xs leading-relaxed mb-2">
+                            ${item.desc}
+                        </p>
+                        ${stepsHTML}
+                    </div>
+
+                    <!-- Footer & Price Area -->
+                    <div class="pt-3 border-t border-slate-100 mt-3 flex items-end justify-between">
+                        <div>
+                            ${priceDisplay}
+                            <span class="text-[10px] text-slate-400 font-medium ml-1">VAT별도</span>
+                        </div>
+                        ${item.extra ? `<span class="text-[11px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md font-bold">${item.extra}</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render Cards with Filter and Search Query
+        function renderCards() {
+            const grid = document.getElementById('cards-grid');
+            const counter = document.getElementById('item-count');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+
+            let filtered = eventData.filter(item => {
+                const matchesCategory = currentFilter === 'all' || item.categories.includes(currentFilter);
+                if (!searchQuery) return matchesCategory;
+
+                const q = searchQuery.toLowerCase().trim();
+                const matchesSearch = item.title.toLowerCase().includes(q) ||
+                                      item.desc.toLowerCase().includes(q) ||
+                                      (item.keywords && item.keywords.toLowerCase().includes(q)) ||
+                                      item.tag.toLowerCase().includes(q) ||
+                                      (item.extra && item.extra.toLowerCase().includes(q));
+
+                return matchesCategory && matchesSearch;
+            });
+
+            if (counter) counter.innerText = filtered.length;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-slate-200">
+                        <div class="text-3xl mb-2">🔍</div>
+                        <p class="text-slate-700 font-bold text-sm mb-1">검색 조건에 일치하는 8월 시술이 없습니다.</p>
+                        <p class="text-xs text-slate-400">다른 검색어를 입력하시거나 카테고리 필터를 변경해 보세요.</p>
+                        <button onclick="clearSearch()" class="mt-3 px-3.5 py-1.5 bg-sky-100 text-sky-700 text-xs font-bold rounded-xl hover:bg-sky-200 transition-colors">
+                            검색어 초기화
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach((item, index) => {
+                grid.innerHTML += createCardHTML(item, index);
+            });
+        }
+
+        // Fast Copy Consultation Text Function
+        function copyConsultationText(id) {
+            const item = eventData.find(d => d.id === id);
+            if (!item) return;
+
+            let text = `[더웰니스 8월 HOT SUMMER]\n• 시술명: ${item.title}\n• 8월 혜택가: ${item.price}${item.unit} (VAT 별도)\n• 주요 내용: ${item.desc}`;
+            if (item.extra) {
+                text += `\n• 혜택/조건: ${item.extra}`;
+            }
+            if (item.steps && item.steps.length > 0) {
+                text += `\n• 단계별 구성:\n  - ` + item.steps.join('\n  - ');
+            }
+            text += `\n\n더웰니스의원 (문의/예약: 02-597-5977)`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`'${item.title}' 상담 문구가 복사되었습니다.`);
+            }).catch(() => {
+                showToast(`복사에 실패했습니다. 직접 복사해주세요.`);
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-message');
+            if (!toast || !msgEl) return;
+
+            msgEl.innerText = message;
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateY(0)';
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-8px)';
+            }, 2500);
+        }
+
+        // Chart Initialization
+        function initChart() {
+            const canvas = document.getElementById('priceChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            const chartData = {
+                labels: [
+                    '아이리쥬란 1cc', 
+                    '리쥬란 2cc', 
+                    '레티젠 콜라겐', 
+                    '스컬트라 1병 (특가🔥)', 
+                    '리바이브 1cc', 
+                    '포텐자+고우리', 
+                    '리투오 6cc (대용량)', 
+                    '무통리쥬란 패키지'
+                ],
+                prices: [19, 20, 29, 40, 45, 59, 59, 65]
+            };
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        label: '8월 시술가 (만원, VAT 별도)',
+                        data: chartData.prices,
+                        backgroundColor: [
+                            'rgba(56, 189, 248, 0.75)',
+                            'rgba(56, 189, 248, 0.75)',
+                            'rgba(56, 189, 248, 0.75)',
+                            'rgba(244, 63, 94, 0.85)', // 스컬트라 40만 강조
+                            'rgba(56, 189, 248, 0.75)',
+                            'rgba(14, 165, 233, 0.85)',
+                            'rgba(14, 165, 233, 0.85)',
+                            'rgba(2, 132, 199, 0.9)'
+                        ],
+                        borderColor: [
+                            'rgba(2, 132, 199, 1)',
+                            'rgba(2, 132, 199, 1)',
+                            'rgba(2, 132, 199, 1)',
+                            'rgba(225, 29, 72, 1)',
+                            'rgba(2, 132, 199, 1)',
+                            'rgba(2, 132, 199, 1)',
+                            'rgba(2, 132, 199, 1)',
+                            'rgba(3, 105, 161, 1)'
+                        ],
+                        borderWidth: 1.5,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', 
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                            titleFont: { size: 13, family: 'Pretendard' },
+                            bodyFont: { size: 13, family: 'Pretendard', weight: 'bold' },
+                            padding: 10,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return ' 8월 혜택가: ' + context.parsed.x + ' 만원 (VAT 별도)';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: '#f1f5f9',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { family: 'Pretendard' },
+                                color: '#64748b',
+                                callback: function(value) {
+                                    return value + '만';
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: '시술 금액 (만원, VAT 별도)',
+                                color: '#94a3b8',
+                                font: { family: 'Pretendard', size: 11 }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { family: 'Pretendard', weight: '700', size: 12 },
+                                color: '#1e293b'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 800,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
+        // Search Controls
+        function searchKeyword(keyword) {
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.value = keyword;
+                searchQuery = keyword;
+                toggleClearBtn(true);
+                renderCards();
+                document.getElementById('cards-grid')?.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.value = '';
+                searchQuery = '';
+                toggleClearBtn(false);
+                renderCards();
+                searchInput.focus();
+            }
+        }
+
+        function toggleClearBtn(show) {
+            const clearBtn = document.getElementById('clear-search-btn');
+            if (clearBtn) {
+                clearBtn.style.display = show ? 'block' : 'none';
+            }
+        }
+
+        // Poster Modal Controls
+        function openPosterModal() {
+            const modal = document.getElementById('poster-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closePosterModal() {
+            const modal = document.getElementById('poster-modal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Keyboard Shortcuts for Rapid Desk Operation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('poster-modal');
+                if (modal && modal.style.display === 'flex') {
+                    closePosterModal();
+                } else {
+                    clearSearch();
+                }
+            }
+            if (e.key === '/' && document.activeElement.id !== 'search-input') {
+                e.preventDefault();
+                document.getElementById('search-input')?.focus();
+            }
+        });
+
+        // DOM Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCards();
+            initChart();
+
+            // Category Filter Buttons
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    const clickedBtn = e.currentTarget;
+                    clickedBtn.classList.add('active');
+                    currentFilter = clickedBtn.getAttribute('data-filter');
+                    renderCards();
+                });
+            });
+
+            // Search Input Listener
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    searchQuery = e.target.value;
+                    toggleClearBtn(searchQuery.length > 0);
+                    renderCards();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
