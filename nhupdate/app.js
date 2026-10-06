@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const custMemo = String(row[memoIdx] || '').trim();
             
             // 규칙 1-2: 고객메모에 '일본팀', '대만팀', '해외' 등이 들어가면 제외(삭제)
-            if (custMemo.includes('일본') || custMemo.includes('대만') || custMemo.includes('해외')) {
+            if (custMemo.includes('일본') || custMemo.includes('대만') /*|| custMemo.includes('해외')*/) {
                 exclusions.push({
                     type: 'foreign',
                     customerNumber: custNum,
